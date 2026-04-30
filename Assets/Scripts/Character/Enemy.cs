@@ -1,0 +1,132 @@
+using DG.Tweening;
+using FishNet.Object;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.UI;
+using static UnityEngine.GraphicsBuffer;
+
+public class Enemy : Character
+{
+    // public BattleSceneManager battleSceneManager;
+    [Header("需要导入")]
+    public EnemyData enemyData;
+    public GameObject Entry;
+    public GameObject aniUI;
+    public Image HPBar;
+    public SpriteRenderer enemySprite;
+    public SortingGroup sortingGroup;
+
+
+    [Header("设定数值")]
+    public int set_HP;
+    public int set_speed;
+    public int set_attack;
+
+    //血条效果
+    [HideInInspector]
+    public float targetFill;
+    [HideInInspector]
+    public float currentFill;
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+        HP.Value = enemyData.maxHP;
+        maxHP.Value = enemyData.maxHP;
+        speed.Value = enemyData.speed;
+        attack.Value = enemyData.attack;
+        defense.Value = enemyData.denfense;
+    }
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        // battleSceneManager = FindObjectOfType<BattleSceneManager>();
+        transform.SetParent(currentRoom.Value.roomObject.Value.transform, false);
+        Entry.gameObject.SetActive(true);
+        gameObject.SetActive(true);
+    }
+    protected virtual void Update()
+    {
+        currentFill = Mathf.Lerp(currentFill, targetFill, Time.deltaTime * 11f);
+        HPBar.fillAmount = currentFill;
+    }
+    [ServerRpc(RequireOwnership = false)]
+    public override void TurnStart()
+    {
+        isAction.Value = true;
+        Act();
+    }
+    [ServerRpc(RequireOwnership = false)]
+    public override void TurnEnd()
+    {
+        // Debug.Log("服务端玩家回合结束");
+        if (currentRoom.Value.roomBattleManager)
+        {
+            //Debug.Log("房间坐标" + currentRoom.Value.gridPos.Value);
+        }
+        isAction.Value = false;
+        currentRoom.Value.roomBattleManager.noBodyAction = true;
+        //Debug.Log("房间Nobody" + currentRoom.Value.roomBattleManager.noBodyAction);
+    }
+    [Server]
+    public virtual void Act()
+    {
+        Invoke("ServerMove", 0.6f);
+        // ServerMove();
+        ClientAni();
+    }
+    [ObserversRpc]
+    public virtual void ClientAni()
+    {
+        if (GameManager.Instance.player.currentRoom.Value == currentRoom.Value)
+        {
+            StartCoroutine(Ani());
+        }
+    }
+    public virtual IEnumerator Ani()//默认攻击动画,变大变小
+    {
+        // Debug.Log("执行动画");
+        yield return null;
+        DG.Tweening.Sequence seq = DOTween.Sequence();
+
+
+        seq.SetLink(aniUI);
+        seq.Append(aniUI.transform.DOScale(1.2f, 0.3f));
+        seq.Append(aniUI.transform.DOScale(1f, 0.3f));
+
+        yield return seq.WaitForCompletion(); // ⭐关键
+
+    }
+    [Server]
+    public virtual void ServerMove()//服务器处理敌人行动
+    {
+
+    }
+    public override void ServerEnemyDead()
+    {
+        var c = Instantiate(Dic.Instance.chestPrefab, this.transform.position, Quaternion.identity).GetComponent<Chest>();
+        c.room.Value = currentRoom.Value;
+        Spawn(c, null, this.gameObject.scene);
+        c.InitChest(enemyData.GetDropResult());
+    }
+    public override void ClientTakeDamageAni()
+    {
+        DG.Tweening.Sequence seq = DOTween.Sequence();
+
+
+        seq.Append(enemySprite.DOFade(0.4f, 0.08f));
+        seq.Append(enemySprite.DOFade(1f, 0.08f));
+        seq.Append(enemySprite.DOFade(0.4f, 0.08f));
+        seq.Append(enemySprite.DOFade(1f, 0.1f));
+        seq.SetLink(enemySprite.gameObject);
+    }
+
+
+    public override void HP_OnChange(int prev, int next, bool asServer)
+    {
+        targetFill = (float)next / (float)maxHP.Value;
+    }
+}

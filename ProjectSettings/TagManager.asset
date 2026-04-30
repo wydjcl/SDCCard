@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Enemy
+  - CardZone
+  - MainUI
+  - PlayerHPBarUI
+  - CharacterImage
+  - PropBox
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - RoomsMap
+  - Water
+  - UI
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Chest
+    uniqueID: 441861413
+    locked: 0
+  - name: Character
+    uniqueID: 3831836919
+    locked: 0
+  - name: Card
+    uniqueID: 1169161997
+    locked: 0
