@@ -44,6 +44,7 @@ public class Room : NetworkBehaviour, IPointerClickHandler
         gridPos.OnChange += GridPos_OnChange;
         canExplore.OnChange += CanExplore_OnChange;
         explored.OnChange += Explored_OnChange;
+        characters.OnChange += Characters_OnChange;
         mapManager = FindObjectOfType<MapManager>();
         transform.SetParent(mapManager.content.transform, false);
         if (roomType.Value == RoomType.Start)
@@ -62,6 +63,7 @@ public class Room : NetworkBehaviour, IPointerClickHandler
         gridPos.OnChange -= GridPos_OnChange;
         canExplore.OnChange -= CanExplore_OnChange;
         explored.OnChange -= Explored_OnChange;
+        characters.OnChange -= Characters_OnChange;
     }
 
     private void Update()
@@ -76,7 +78,7 @@ public class Room : NetworkBehaviour, IPointerClickHandler
         {
             return;
         }
-
+        return;
         if (HaveAliveEnemy() && !isSortedPos)
         {
             timer += Time.deltaTime;
@@ -107,6 +109,26 @@ public class Room : NetworkBehaviour, IPointerClickHandler
         if (canExplore.Value == true)
         {
             roomImage.color = Color.gray;
+        }
+    }
+    private void Characters_OnChange(SyncListOperation op, int index, Character oldItem, Character newItem, bool asServer)
+    {
+        // ❗ 只在客户端处理
+        //if (asServer) return;
+        if (asServer)
+        {
+            Debug.Log("服务器修改了角色列表,不排序");
+        }
+        Debug.Log("客户端排序");
+
+        // 👉 只关心“新增”
+        if (op == SyncListOperation.Add)
+        {
+            if (newItem is Enemy)
+            {
+                Debug.Log("有敌人加入，重新排序");
+                ClientChangeEnemyPos();
+            }
         }
     }
     public void DebugLogs()
@@ -300,7 +322,12 @@ public class Room : NetworkBehaviour, IPointerClickHandler
         }
         if (aliveEnemies.Count > 0)
         {
+            Debug.Log("至少给一个敌人排序");
             isSortedPos = true;
+        }
+        else
+        {
+            Debug.Log("排序但没敌人");
         }
     }
     /// <summary>

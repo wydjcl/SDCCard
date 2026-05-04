@@ -19,6 +19,7 @@ public class Player : Character
 
     public readonly SyncVar<string> playerName = new SyncVar<string>();
     public readonly SyncVar<int> characterID = new SyncVar<int>();
+    public readonly SyncVar<bool> isGo = new SyncVar<bool>();//是否开始游戏了,开始游戏后初始场景UI就会关闭,或者开始游戏后可以使用道具
 
 
     public readonly SyncVar<Vector2Int> playerPos = new SyncVar<Vector2Int>();
@@ -122,6 +123,8 @@ public class Player : Character
     {
         isExit.Value = false;
         isDead.Value = false;
+        isAction.Value = false;
+        isGo.Value = false;
         if (i == 0)
         {
             maxHP.Value = 77;
@@ -148,16 +151,17 @@ public class Player : Character
         initialSceneUI.gameObject.SetActive(false);
     }
     [ObserversRpc]
-    public void OpenMainUI()
+    public void ClientOpenMainUI()
     {
         // mainUI = GameObject.FindGameObjectWithTag("MainUI");
         mainUI.gameObject.SetActive(true);
     }
     [ObserversRpc]
-    public void DisableMainUI()
+    public void ClientDisableMainUI()
     {
         mainUI = GameObject.FindGameObjectWithTag("MainUI");
         mainUI.gameObject.SetActive(false);
+        SaveManager.Instance.SaveTest();
     }
     /// <summary>
     /// 进入某房间,传房间坐标
@@ -208,11 +212,25 @@ public class Player : Character
 
         InstanceFinder.SceneManager.UnloadGlobalScenes(unloadData);//TODO回调
 
-        foreach (var p in GameManager.Instance.players)
+        //foreach (var p in GameManager.Instance.players)
+        //{
+        //    p.InitData(p.characterID.Value);
+        //}
+        ClientOpenMainUI();
+        ClientUnloadBattleScene();
+    }
+    [ObserversRpc]
+    public void ClientUnloadBattleScene()//客户端结束战斗场景
+    {
+        Debug.Log("客户端结束战斗场景");
+        if (isDead.Value)
         {
-            p.InitData(p.characterID.Value);
+            Debug.Log("死亡,清空背包");
+            SaveData.Instance.data.bag.Clear();
         }
-        OpenMainUI();
+        InitData(characterID.Value);
+
+        SaveManager.Instance.SaveTest();
     }
 
     #endregion
@@ -448,15 +466,21 @@ public class Player : Character
     #endregion
 
     #region 战斗
-    [ServerRpc(RequireOwnership = false)]
-    public override void TurnStart()
+    //[ServerRpc(RequireOwnership = false)]
+    //public override void TurnStart()
+    //{
+    //    block.Value = 0;//回合开始格挡值清零
+
+    //    currentRoom.Value.roomBattleManager.noBodyAction = false;
+    //    isAction.Value = true;
+    //    // Debug.Log(name + "回合开始");
+    //    ClientTurnStart(Owner);
+    //}
+    public override void ServerTurnStart()
     {
-        currentRoom.Value.roomBattleManager.noBodyAction = false;
-        isAction.Value = true;
-        Debug.Log(name + "回合开始");
-
-
+        base.ServerTurnStart();
         ClientTurnStart(Owner);
+
     }
     [TargetRpc]
     public void ClientTurnStart(NetworkConnection conn)
@@ -464,16 +488,20 @@ public class Player : Character
         BattleSceneManager.Instance.turnButtom.SetActive(true);
         DrawCard(5);
     }
-    [ServerRpc(RequireOwnership = false)]
-    public override void TurnEnd()
+    //[ServerRpc(RequireOwnership = false)]
+    //public override void TurnEnd()
+    //{
+    //    if (!isAction.Value)
+    //    {
+    //        return;
+    //    }
+    //    currentRoom.Value.roomBattleManager.noBodyAction = true;
+    //    isAction.Value = false;
+    //    ClientTurnEnd(Owner);
+    //}
+    public override void ServerTurnEnd()
     {
-        if (!isAction.Value)
-        {
-
-            return;
-        }
-        currentRoom.Value.roomBattleManager.noBodyAction = true;
-        isAction.Value = false;
+        base.ServerTurnEnd();
         ClientTurnEnd(Owner);
     }
     [TargetRpc]

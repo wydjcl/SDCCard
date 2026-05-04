@@ -14,7 +14,7 @@ public class Boar : Enemy
     [Server]
     public override void ServerMove()
     {
-        Debug.Log("服务端执行攻击逻辑");
+        //Debug.Log("服务端执行攻击逻辑");
         foreach (var c in currentRoom.Value.characters)
         {
             if (c is Player player)

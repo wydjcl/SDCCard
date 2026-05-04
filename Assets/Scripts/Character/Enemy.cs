@@ -47,29 +47,42 @@ public class Enemy : Character
         transform.SetParent(currentRoom.Value.roomObject.Value.transform, false);
         Entry.gameObject.SetActive(true);
         gameObject.SetActive(true);
+        // currentRoom.Value.ClientChangeEnemyPos();
     }
     protected virtual void Update()
     {
         currentFill = Mathf.Lerp(currentFill, targetFill, Time.deltaTime * 11f);
         HPBar.fillAmount = currentFill;
     }
-    [ServerRpc(RequireOwnership = false)]
-    public override void TurnStart()
+    //[ServerRpc(RequireOwnership = false)]
+    //public override void TurnStart()
+    //{
+    //    block.Value = 0;//回合开始格挡值清零
+    //    isAction.Value = true;
+    //    Act();
+
+    //}
+    public override void ServerTurnStart()
     {
-        isAction.Value = true;
+        base.ServerTurnStart();
+        //isAction.Value = true;
         Act();
     }
-    [ServerRpc(RequireOwnership = false)]
-    public override void TurnEnd()
+    //[ServerRpc(RequireOwnership = false)]
+    //public override void TurnEnd()
+    //{
+    //    // Debug.Log("服务端玩家回合结束");
+    //    if (currentRoom.Value.roomBattleManager)
+    //    {
+    //        //Debug.Log("房间坐标" + currentRoom.Value.gridPos.Value);
+    //    }
+    //    isAction.Value = false;
+    //    currentRoom.Value.roomBattleManager.noBodyAction = true;
+    //    //Debug.Log("房间Nobody" + currentRoom.Value.roomBattleManager.noBodyAction);
+    //}
+    public override void ServerTurnEnd()
     {
-        // Debug.Log("服务端玩家回合结束");
-        if (currentRoom.Value.roomBattleManager)
-        {
-            //Debug.Log("房间坐标" + currentRoom.Value.gridPos.Value);
-        }
-        isAction.Value = false;
-        currentRoom.Value.roomBattleManager.noBodyAction = true;
-        //Debug.Log("房间Nobody" + currentRoom.Value.roomBattleManager.noBodyAction);
+        base.ServerTurnEnd();
     }
     [Server]
     public virtual void Act()

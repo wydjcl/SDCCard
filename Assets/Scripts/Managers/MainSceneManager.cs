@@ -78,7 +78,7 @@ public class MainSceneManager : NetworkBehaviour
     {
         SceneLoadData loadData = new SceneLoadData("BattleScene");
         InstanceFinder.SceneManager.LoadGlobalScenes(loadData);
-        GameManager.Instance.player.DisableMainUI();
+        GameManager.Instance.player.ClientDisableMainUI();
     }
     #endregion
     #region 战备
@@ -91,4 +91,9 @@ public class MainSceneManager : NetworkBehaviour
 
 
     #endregion  
+
+    public void ClickBagButton()
+    {
+        BagUI.Instance.OpenWithWareHouse();
+    }
 }

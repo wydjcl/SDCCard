@@ -25,7 +25,9 @@ public class PropUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
     public bool isWarehouse;//在战备的仓库
     public bool isBag;//在战备的背包
     public bool isChest;//在战斗的宝箱
-    public bool isBattleBag;
+    public bool isShop;//在商店
+    public bool isVault;//在保险箱
+    //public bool isBattleBag;
 
     public bool isEquip;//是装备
     public bool isUseful;//是消耗品
@@ -61,44 +63,88 @@ public class PropUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
     {
         if (isWarehouse)
         {
+            if (BagUI.Instance.isBattle)
+            {
+                return;
+            }
             SaveData.Instance.TakeFromList(SaveData.Instance.data.bag, SaveData.Instance.data.warehouse, props.propName, props.amount);
-            PreparationUI.Instance.Init();
+            //PreparationUI.Instance.Init();
+            BagUI.Instance.InitBag();
+            this.gameObject.SetActive(false);
+            Destroy(this.gameObject);
+            box.propUI = null;
         }
         if (isBag)
         {
+            if (BagUI.Instance.isBattle)
+            {
+                return;
+            }
+            //TODO商店里按左键卖出
             SaveData.Instance.StoreToWarehouse(SaveData.Instance.data.bag, SaveData.Instance.data.warehouse, props.propName, props.amount);
-            PreparationUI.Instance.Init();
+            //PreparationUI.Instance.Init();
+            BagUI.Instance.InitWareHouse();
+            this.gameObject.SetActive(false);
+            Destroy(this.gameObject);
+            box.propUI = null;
         }
         if (isChest)
         {
-            SaveData.Instance.TakeFromList(SaveData.Instance.data.bag, BattleScenePlayerUI.Instance.chest.propsList, props.propName, props.amount);
-            BattleScenePlayerUI.Instance.chest.ClientSyncChestListRpc(GameManager.Instance.player, BattleScenePlayerUI.Instance.chest.propsList);
-            BattleScenePlayerUI.Instance.Init();
+            SaveData.Instance.TakeFromList(SaveData.Instance.data.bag, BagUI.Instance.chest.propsList, props.propName, props.amount);
+            // BattleScenePlayerUI.Instance.chest.ClientSyncChestListRpc(GameManager.Instance.player, BattleScenePlayerUI.Instance.chest.propsList);
+            // BattleScenePlayerUI.Instance.Init();
+
+            BagUI.Instance.chest.ClientSyncChestListRpc(GameManager.Instance.player, BagUI.Instance.chest.propsList);
+            BagUI.Instance.InitBag();
+            BagUI.Instance.InitChest(BagUI.Instance.chest);
+            //Destroy(this.gameObject);
+            //box.propUI = null;
         }
     }
     public void GetOne()//右键
     {
         if (isWarehouse)
         {
+            if (BagUI.Instance.isBattle)
+            {
+                return;
+            }
             SaveData.Instance.TakeFromList(SaveData.Instance.data.bag, SaveData.Instance.data.warehouse, props.propName, 1);
-            PreparationUI.Instance.Init();
+            BagUI.Instance.InitWareHouse();
+            BagUI.Instance.InitBag();
         }
         if (isBag)
         {
+            if (BagUI.Instance.isBattle)
+            {
+                return;
+            }
             SaveData.Instance.StoreToWarehouse(SaveData.Instance.data.bag, SaveData.Instance.data.warehouse, props.propName, 1);
-            PreparationUI.Instance.Init();
+            BagUI.Instance.InitWareHouse();
+            BagUI.Instance.InitBag();
         }
         if (isChest)
         {
-            SaveData.Instance.TakeFromList(SaveData.Instance.data.bag, BattleScenePlayerUI.Instance.chest.propsList, props.propName, 1);
-            BattleScenePlayerUI.Instance.chest.ClientSyncChestListRpc(GameManager.Instance.player, BattleScenePlayerUI.Instance.chest.propsList);
-            BattleScenePlayerUI.Instance.Init();
+            SaveData.Instance.TakeFromList(SaveData.Instance.data.bag, BagUI.Instance.chest.propsList, props.propName, 1);
+            //BattleScenePlayerUI.Instance.chest.ClientSyncChestListRpc(GameManager.Instance.player, BattleScenePlayerUI.Instance.chest.propsList);
+            //BattleScenePlayerUI.Instance.Init();
+
+            BagUI.Instance.chest.ClientSyncChestListRpc(GameManager.Instance.player, BagUI.Instance.chest.propsList);
+            BagUI.Instance.InitBag();
+            BagUI.Instance.InitChest(BagUI.Instance.chest);
+            //Destroy(this.gameObject);
+            //box.propUI = null;
         }
     }
 
     public void E()//消耗品或装备E键盘使用
     {
-        if (isBattleBag)
+        if (GameManager.Instance.player.currentRoom.Value.isBattle.Value)
+        {
+            Debug.Log("战斗中无法使用");
+            return;
+        }
+        if (BagUI.Instance.isBattle)
         {
             if (Dic.Instance.GetPropType(props.propName) == PropType.Consumable)
             {
@@ -108,7 +154,7 @@ public class PropUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
                     e.ApplyEffect(GameManager.Instance.player);
                 }
                 SaveData.Instance.UseProp(props.propName);
-                BattleScenePlayerUI.Instance.InitBag();
+                BagUI.Instance.InitBag();
             }
             if (Dic.Instance.GetPropType(props.propName) == PropType.Equipment)
             {
@@ -119,66 +165,63 @@ public class PropUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
     #region 物理
     public void OnBeginDrag(PointerEventData eventData)
     {
-        return;
-        // 开始拖拽时，计算鼠标和图片的偏移
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            transform.parent as RectTransform,
-            Input.mousePosition,
-            eventData.pressEventCamera,
-            out Vector2 localPoint);
+        //// 开始拖拽时，计算鼠标和图片的偏移
+        //RectTransformUtility.ScreenPointToLocalPointInRectangle(
+        //    transform.parent as RectTransform,
+        //    Input.mousePosition,
+        //    eventData.pressEventCamera,
+        //    out Vector2 localPoint);
 
-        dragOffset = (Vector2)transform.localPosition - localPoint;
+        //dragOffset = (Vector2)transform.localPosition - localPoint;
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        return;
-        // 核心：让UI跟随鼠标移动
-        RectTransform rect = GetComponent<RectTransform>();
+        //// 核心：让UI跟随鼠标移动
+        //RectTransform rect = GetComponent<RectTransform>();
 
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            rect.parent as RectTransform,
-            Input.mousePosition,
-            eventData.pressEventCamera,
-            out Vector2 localPoint);
+        //RectTransformUtility.ScreenPointToLocalPointInRectangle(
+        //    rect.parent as RectTransform,
+        //    Input.mousePosition,
+        //    eventData.pressEventCamera,
+        //    out Vector2 localPoint);
 
-        // 应用偏移，让拖拽更自然
-        rect.localPosition = localPoint + dragOffset;
-
+        //// 应用偏移，让拖拽更自然
+        //rect.localPosition = localPoint + dragOffset;
 
 
-        target = null;
 
-        // 1. 创建一个射线事件（从鼠标位置发射，专门找UI）
-        PointerEventData clickData = new PointerEventData(EventSystem.current);
-        clickData.position = Input.mousePosition;
+        //target = null;
 
-        // 2. 存储射线碰到的所有UI
-        var results = new System.Collections.Generic.List<RaycastResult>();
-        EventSystem.current.RaycastAll(clickData, results);
+        //// 1. 创建一个射线事件（从鼠标位置发射，专门找UI）
+        //PointerEventData clickData = new PointerEventData(EventSystem.current);
+        //clickData.position = Input.mousePosition;
 
-        // 3. 遍历找到第一个标签为 PropBox 的格子
-        foreach (var result in results)
-        {
-            if (result.gameObject.CompareTag("PropBox"))
-            {
-                target = result.gameObject.GetComponent<PropBox>();
-                break; // 找到就停
-            }
-        }
+        //// 2. 存储射线碰到的所有UI
+        //var results = new System.Collections.Generic.List<RaycastResult>();
+        //EventSystem.current.RaycastAll(clickData, results);
+
+        //// 3. 遍历找到第一个标签为 PropBox 的格子
+        //foreach (var result in results)
+        //{
+        //    if (result.gameObject.CompareTag("PropBox"))
+        //    {
+        //        target = result.gameObject.GetComponent<PropBox>();
+        //        break; // 找到就停
+        //    }
+        //}
 
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        return;
-        if (target)
-        {
-            box = target;
-        }
-        transform.position = box.transform.position;
-        //transform.SetParent(box.transform, false);
-        target = null;
+        //if (target)
+        //{
+        //    box = target;
+        //}
+        //transform.position = box.transform.position;
+        ////transform.SetParent(box.transform, false);
+        //target = null;
     }
 
     public void OnPointerClick(PointerEventData eventData)

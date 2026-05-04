@@ -62,8 +62,6 @@ public class BattleScenePlayerUI : UITemplate<BattleScenePlayerUI>
             p.propName = data.bag[i].propName;
             p.amount = data.bag[i].amount;
             propUI.props = p;
-
-            propUI.isBattleBag = true;
         }
     }
     public void InitChest(List<Props> props)

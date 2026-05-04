@@ -16,5 +16,5 @@ MonoBehaviour:
   propSprite: {fileID: 21300000, guid: 899ba93c9eda08c49945b83ebf32b324, type: 3}
   propType: 0
   propRate: 0
-  maxStack: 3
+  maxStack: 99
   effects: []

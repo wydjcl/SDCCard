@@ -10,7 +10,7 @@ using static UnityEngine.EventSystems.EventTrigger;
 public class Chest : NetworkBehaviour, IPointerClickHandler
 {
     public readonly SyncVar<Room> room = new SyncVar<Room>();
-    public readonly List<Props> propsList = new List<Props>();
+    public List<Props> propsList = new List<Props>();
     public readonly SyncVar<bool> isLocked = new SyncVar<bool>();
     public GameObject Entry;
 
@@ -24,16 +24,11 @@ public class Chest : NetworkBehaviour, IPointerClickHandler
         base.OnStartClient();
         transform.SetParent(room.Value.roomObject.Value.transform);
         Entry.gameObject.SetActive(true);
-        return;
-        if (IsServerStarted)
+        if (transform.position.y > 10)
         {
-            Props p = new Props();
-
-            p.propName = "垃圾";
-            p.amount = 5;
-            propsList.Add(p);
-            InitChest(propsList);
+            transform.position = new Vector3(transform.position.x, 0, transform.position.z);//如果生成在空中则放置在地面上
         }
+        return;
     }
     [ObserversRpc]
     public void InitChest(List<Props> ps)
@@ -47,10 +42,10 @@ public class Chest : NetworkBehaviour, IPointerClickHandler
                 Despawn();
             }
         }
-        Debug.Log("放入宝藏");
+        //Debug.Log("放入宝藏");
         if (ps.Count > 0)
         {
-            Debug.Log(ps[0].propName);
+            // Debug.Log(ps[0].propName);
         }
         Entry.gameObject.SetActive(true);
         //if (IsServerStarted)
@@ -104,7 +99,9 @@ public class Chest : NetworkBehaviour, IPointerClickHandler
         }
         ClientOpenRpc(GameManager.Instance.player);
 
-        BattleSceneManager.Instance.ChangePlayerUIState(this);
+        // BattleSceneManager.Instance.ChangePlayerUIState(this);
+        BagUI.Instance.OpenWithChest(this);
+        //BagUI.Instance.chest = this;
     }
 
     private void Update()

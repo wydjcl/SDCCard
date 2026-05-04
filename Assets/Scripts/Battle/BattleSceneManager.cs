@@ -43,9 +43,17 @@ public class BattleSceneManager : MonoBehaviour
         {
             ChangeMapState();
         }
-        if (Input.GetKeyDown(KeyCode.B))
+        if (Input.GetKeyDown(KeyCode.B) || Input.GetKeyDown(KeyCode.Tab))
         {
-            ChangePlayerUIState();
+            //ChangePlayerUIState();
+            if (BagUI.Instance.root.gameObject.activeSelf)
+            {
+                BagUI.Instance.Close();
+            }
+            else
+            {
+                BagUI.Instance.Open();
+            }
         }
 
         //WSAD移动
@@ -114,7 +122,7 @@ public class BattleSceneManager : MonoBehaviour
     {
         GameManager.Instance.player.TurnEnd();
     }
-    public void ExitBattle()
+    public void ExitBattle()//按钮引用,离开战斗场景
     {
         GameManager.Instance.player.Exit();
     }

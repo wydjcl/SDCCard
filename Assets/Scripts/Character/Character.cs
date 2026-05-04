@@ -10,17 +10,20 @@ using UnityEngine.Experimental.GlobalIllumination;
 public class Character : NetworkBehaviour
 {
     public readonly SyncVar<Room> currentRoom = new SyncVar<Room>();
-
+    [Header("基础属性")]
     public readonly SyncVar<int> HP = new SyncVar<int>();
     public readonly SyncVar<int> maxHP = new SyncVar<int>();
     public readonly SyncVar<int> attack = new SyncVar<int>();//攻击力
     public readonly SyncVar<int> defense = new SyncVar<int>();//防御力
     public readonly SyncVar<int> speed = new SyncVar<int>();//速度
-
+    [Header("额外属性")]
     public readonly SyncVar<int> attackEX = new SyncVar<int>();//攻击力
     public readonly SyncVar<int> defenseEX = new SyncVar<int>();//防御力
     public readonly SyncVar<int> speedEX = new SyncVar<int>();//速度
+    [Header("其他属性")]
+    public readonly SyncVar<int> block = new SyncVar<int>();//格挡值,回合开始时候清零
 
+    [Header("战斗结算")]
     public readonly SyncVar<bool> isAction = new SyncVar<bool>();//正在行动
     public readonly SyncVar<bool> isDead = new SyncVar<bool>();//死亡
     public readonly SyncVar<bool> isSkip = new SyncVar<bool>();//为真时不进入回合计算
@@ -34,15 +37,32 @@ public class Character : NetworkBehaviour
         base.OnStartClient();
         HP.OnChange += HP_OnChange;
     }
-
+    //这里写的子类并不能直接调用,请复制粘贴
+    //按理来说,rpc方法应该直接在父类里面调用外部方法,然后子类不去重写,但是我已经写了所以懒得改了
+    [ServerRpc(RequireOwnership = false)]
     public virtual void TurnStart()
     {
-
+        ServerTurnStart();
     }
-
+    [ServerRpc(RequireOwnership = false)]
     public virtual void TurnEnd()
     {
-
+        ServerTurnEnd();
+    }
+    public virtual void ServerTurnStart()
+    {
+        block.Value = 0;//回合开始格挡值清零
+        currentRoom.Value.roomBattleManager.noBodyAction = false;
+        isAction.Value = true;
+    }
+    public virtual void ServerTurnEnd()
+    {
+        if (!isAction.Value)
+        {
+            return;
+        }
+        currentRoom.Value.roomBattleManager.noBodyAction = true;
+        isAction.Value = false;
     }
     #endregion
 

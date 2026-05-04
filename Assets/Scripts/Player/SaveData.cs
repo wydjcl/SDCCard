@@ -293,7 +293,7 @@ public class SaveData : SingletonMono<SaveData>
     {
         data.warehouse = Sort(data.warehouse);
         data.bag = Sort(data.bag);
-        SaveManager.Instance.SaveTest();
+        //SaveManager.Instance.SaveTest();
     }
     [ContextMenu("测试整理仓库")]
     public void Test()
