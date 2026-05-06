@@ -5,14 +5,16 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using static Unity.Collections.AllocatorManager;
 
 public class PlayerHealthBar : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public Player player;
-    private InitialSceneUI ui;
+    public InitialSceneUI ui;
 
     public Image avatar;
     public Image healthImage;
+    public Image blockImage;
     public Image healthBarImage;
     public TextMeshProUGUI playerNameText;
     public TextMeshProUGUI hpText;
@@ -51,7 +53,14 @@ public class PlayerHealthBar : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        hpText.text = $"{player.HP.Value}/{player.maxHP.Value}";
+        if (player.block.Value <= 0)
+        {
+            hpText.text = $"{player.HP.Value}/{player.maxHP.Value}";
+        }
+        else
+        {
+            hpText.text = $"{player.HP.Value}/{player.maxHP.Value}({player.block.Value})";
+        }
         hpText.gameObject.SetActive(true);
     }
 

@@ -5,8 +5,9 @@ using UnityEngine;
 public class NormalAttack : CardEffectSO
 {
     public int damage = 6;
+    public float percent = 1f;
     public override void ApplyEffect(Player caster, Character target, Card card)
     {
-        target.TakeDamage(damage);
+        target.TakeDamage(Mathf.CeilToInt(caster.Attack() * percent));
     }
 }

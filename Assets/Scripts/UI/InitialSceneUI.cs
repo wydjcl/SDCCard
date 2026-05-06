@@ -28,7 +28,7 @@ public class InitialSceneUI : MonoBehaviour
 
     [Header("玩家血条UI管理")]
     public float spacing = 100f;
-    private List<RectTransform> bars = new List<RectTransform>();
+    public List<RectTransform> bars = new List<RectTransform>();
     private void Awake()
     {
         if (networkManager == null)
@@ -109,6 +109,10 @@ public class InitialSceneUI : MonoBehaviour
     {
         for (int i = 0; i < bars.Count; i++)
         {
+            if (!bars[i].gameObject.activeSelf)
+            {
+                continue;
+            }
             bars[i].anchoredPosition = new Vector2(240, i * spacing + 100);
         }
     }

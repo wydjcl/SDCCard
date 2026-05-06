@@ -202,6 +202,7 @@ public class RoomBattleManager : NetworkBehaviour
     {
         BattleSceneManager.Instance.turnButtom.SetActive(false);
         GameManager.Instance.player.CreateCard();
+        GameManager.Instance.player.InitState();
     }
 
     [TargetRpc]
@@ -209,6 +210,7 @@ public class RoomBattleManager : NetworkBehaviour
     {
         BattleSceneManager.Instance.turnButtom.SetActive(false);
         GameManager.Instance.player.CreateCard();
+        GameManager.Instance.player.InitState();
     }
 
 

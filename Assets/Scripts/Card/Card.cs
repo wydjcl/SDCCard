@@ -50,7 +50,7 @@ public class Card : MonoBehaviour
         cardCostText.text = so.cardCost.ToString();
 
 
-        // cardDesText.text = RichTextHelper.ReplaceValues(so.cardDes, player.myPlayer.attack.Value + player.myPlayer.attackEx.Value);
+        cardDesText.text = RichTextHelper.ReplaceValues(so.cardDes, GameManager.Instance.player.Attack());
 
     }
 

@@ -127,9 +127,9 @@ public class Player : Character
         isGo.Value = false;
         if (i == 0)
         {
-            maxHP.Value = 77;
-            HP.Value = 77;
-            attack.Value = 6;
+            maxHP.Value = 770;
+            HP.Value = 770;
+            attack.Value = 15;
             speed.Value = 50;
             cost.Value = 77;
         }
@@ -141,6 +141,54 @@ public class Player : Character
             speed.Value = 50;
             cost.Value = 66;
         }
+    }
+    [ServerRpc(RequireOwnership = false)]
+    public void InitDeck()
+    {
+        if (characterID.Value == 0)
+        {
+            cardNameList.Clear();
+            cardNameList.Add("给你一拳");
+            cardNameList.Add("给你一拳");
+            cardNameList.Add("给你一拳");
+            cardNameList.Add("给你一拳");
+            cardNameList.Add("给你一拳");
+            cardNameList.Add("基础魔法屏障");
+            cardNameList.Add("基础魔法屏障");
+            cardNameList.Add("基础魔法屏障");
+            cardNameList.Add("基础魔法屏障");
+            cardNameList.Add("基础魔法屏障");
+
+            cardNameList.Add("发现宝箱");
+            cardNameList.Add("发现宝箱");
+            cardNameList.Add("旋风斩");
+            cardNameList.Add("我身为盾");
+
+        }
+        if (characterID.Value == 1)
+        {
+            cardNameList.Clear();
+            cardNameList.Add("发现宝箱");
+            cardNameList.Add("发现宝箱");
+            cardNameList.Add("发现宝箱");
+            cardNameList.Add("发现宝箱");
+            cardNameList.Add("发现宝箱");
+            cardNameList.Add("发现宝箱");
+            cardNameList.Add("发现宝箱");
+            cardNameList.Add("发现宝箱");
+            cardNameList.Add("发现宝箱");
+            cardNameList.Add("发现宝箱");
+            cardNameList.Add("发现宝箱");
+            cardNameList.Add("发现宝箱");
+        }
+    }
+    [ServerRpc(RequireOwnership = false)]
+    /// <summary>
+    /// 玩家重置状态
+    /// </summary>
+    public void InitState()
+    {
+        GameManager.Instance.player.block.Value = 0;//TODO战后清除buff
     }
     /// <summary>
     /// 关闭初始场景UI
@@ -155,6 +203,10 @@ public class Player : Character
     {
         // mainUI = GameObject.FindGameObjectWithTag("MainUI");
         mainUI.gameObject.SetActive(true);
+        foreach (var b in healthBar.ui.bars)
+        {
+            b.gameObject.SetActive(true);
+        }
     }
     [ObserversRpc]
     public void ClientDisableMainUI()
@@ -179,6 +231,8 @@ public class Player : Character
         room.characters.Add(this);
 
         room.ServerPlayerIn(this, Owner);
+
+
         Debug.Log($"玩家*{playerName.Value}*进入了{room.gridPos.Value}坐标的房间");
     }
     [ServerRpc(RequireOwnership = false)]
@@ -236,40 +290,6 @@ public class Player : Character
     #endregion
 
     #region 卡牌
-    [ServerRpc(RequireOwnership = false)]
-    public void InitDeck()
-    {
-        if (characterID.Value == 0)
-        {
-            cardNameList.Clear();
-            cardNameList.Add("给你一拳");
-            cardNameList.Add("给你一拳");
-            cardNameList.Add("给你一拳");
-            cardNameList.Add("给你一拳");
-            cardNameList.Add("给你一拳");
-            cardNameList.Add("给你一拳");
-            cardNameList.Add("给你一拳");
-            cardNameList.Add("给你一拳");
-            cardNameList.Add("给你一拳");
-            cardNameList.Add("给你一拳");
-        }
-        if (characterID.Value == 1)
-        {
-            cardNameList.Clear();
-            cardNameList.Add("发现宝箱");
-            cardNameList.Add("发现宝箱");
-            cardNameList.Add("发现宝箱");
-            cardNameList.Add("发现宝箱");
-            cardNameList.Add("发现宝箱");
-            cardNameList.Add("发现宝箱");
-            cardNameList.Add("发现宝箱");
-            cardNameList.Add("发现宝箱");
-            cardNameList.Add("发现宝箱");
-            cardNameList.Add("发现宝箱");
-            cardNameList.Add("发现宝箱");
-            cardNameList.Add("发现宝箱");
-        }
-    }
 
     public void CreateCard()
     {
@@ -466,16 +486,7 @@ public class Player : Character
     #endregion
 
     #region 战斗
-    //[ServerRpc(RequireOwnership = false)]
-    //public override void TurnStart()
-    //{
-    //    block.Value = 0;//回合开始格挡值清零
 
-    //    currentRoom.Value.roomBattleManager.noBodyAction = false;
-    //    isAction.Value = true;
-    //    // Debug.Log(name + "回合开始");
-    //    ClientTurnStart(Owner);
-    //}
     public override void ServerTurnStart()
     {
         base.ServerTurnStart();
@@ -486,19 +497,9 @@ public class Player : Character
     public void ClientTurnStart(NetworkConnection conn)
     {
         BattleSceneManager.Instance.turnButtom.SetActive(true);
-        DrawCard(5);
+        DrawCard(10);
     }
-    //[ServerRpc(RequireOwnership = false)]
-    //public override void TurnEnd()
-    //{
-    //    if (!isAction.Value)
-    //    {
-    //        return;
-    //    }
-    //    currentRoom.Value.roomBattleManager.noBodyAction = true;
-    //    isAction.Value = false;
-    //    ClientTurnEnd(Owner);
-    //}
+
     public override void ServerTurnEnd()
     {
         base.ServerTurnEnd();
@@ -554,9 +555,39 @@ public class Player : Character
     public override void HP_OnChange(int prev, int next, bool asServer)
     {
         base.HP_OnChange(prev, next, asServer);
+
         if (healthBar)
         {
+            if (block.Value <= 0)
+            {
+                healthBar.hpText.text = $"{HP.Value}/{maxHP.Value}";
+            }
+            else
+            {
+                healthBar.hpText.text = $"{HP.Value}/{maxHP.Value}({block.Value})";
+            }
             healthBar.healthImage.fillAmount = (float)HP.Value / (float)maxHP.Value;
+        }
+    }
+
+    public override void Block_OnChange(int prev, int next, bool asServer)
+    {
+        base.Block_OnChange(prev, next, asServer);
+        if (healthBar)
+        {
+            if (block.Value <= 0)
+            {
+                healthBar.hpText.text = $"{HP.Value}/{maxHP.Value}";
+            }
+            else
+            {
+                healthBar.hpText.text = $"{HP.Value}/{maxHP.Value}({block.Value})";
+            }
+            healthBar.blockImage.fillAmount = (float)block.Value / (float)maxHP.Value;
+            if (healthBar.blockImage.fillAmount > healthBar.healthImage.fillAmount)
+            {
+                healthBar.blockImage.fillAmount = healthBar.healthImage.fillAmount;
+            }
         }
     }
 

@@ -64,30 +64,4 @@ public class Dic : SingletonMono<Dic>
         Debug.LogWarning("没找到对应道具!!!");
         return PropType.Normal;
     }
-    #region 浮动文字
-    public void GetDamageText(Vector3 pos, int damage)
-    {
-        var t = Instantiate(dynamicTextPrefab, pos, Quaternion.identity).GetComponent<DynamicText>();
-        t.text.color = Color.red;
-        t.text.text = (-damage).ToString();
-    }
-    public void GetHealText(Vector3 pos, int healAmount)
-    {
-        var t = Instantiate(dynamicTextPrefab, pos, Quaternion.identity).GetComponent<DynamicText>();
-        t.text.color = Color.green;
-        t.text.text = (healAmount).ToString();
-    }
-    public void GetNolmalText(Vector3 pos, string s)
-    {
-        var t = Instantiate(dynamicTextPrefab, pos, Quaternion.identity).GetComponent<DynamicText>();
-        //t.text.color = Color.green;
-        t.text.text = s;
-    }
-    public void GetNolmalText(Vector3 pos, string s, Color c)
-    {
-        var t = Instantiate(dynamicTextPrefab, pos, Quaternion.identity).GetComponent<DynamicText>();
-        t.text.color = c;
-        t.text.text = s;
-    }
-    #endregion
 }

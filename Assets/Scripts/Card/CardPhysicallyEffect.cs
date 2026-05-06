@@ -63,6 +63,7 @@ public class CardPhysicallyEffect : MonoBehaviour, IBeginDragHandler, IDragHandl
         {
             if (eventData.pointerEnter != null)
             {
+                //Debug.Log(eventData.pointerEnter.name);
                 if (eventData.pointerEnter.CompareTag("Enemy") && card.cardType == CardType.AttackCard)
                 {
                     if (eventData.pointerEnter.GetComponent<Enemy>() != null)
@@ -73,9 +74,11 @@ public class CardPhysicallyEffect : MonoBehaviour, IBeginDragHandler, IDragHandl
                 }
                 if (eventData.pointerEnter.CompareTag("Player") && card.cardType == CardType.PAffectCard)
                 {
-                    if (eventData.pointerEnter.GetComponent<Player>() != null)
+                    if (eventData.pointerEnter.GetComponentInParent<PlayerHealthBar>() != null)
                     {
-                        target = eventData.pointerEnter.GetComponent<Player>();
+                        var bar = eventData.pointerEnter.GetComponentInParent<PlayerHealthBar>();
+                        target = bar.player;
+                        // target = eventData.pointerEnter.GetComponent<Player>();
                         canEcecute = true;
                     }
                 }

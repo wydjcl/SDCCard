@@ -36,7 +36,6 @@ public class Room : NetworkBehaviour, IPointerClickHandler
     public bool _isBattle;
     public RoomType _roomType;
     public float timer;
-    public bool isSortedPos;
 
     public override void OnStartClient()
     {
@@ -51,7 +50,16 @@ public class Room : NetworkBehaviour, IPointerClickHandler
         {
             roomImage.color = Color.white;
             //ServerClick(GameManager.Instance.player);
-            GameManager.Instance.player.EnterRoom(this);
+
+            if (IsServerStarted)
+            {
+                GameManager.Instance.player.currentRoom.Value = this;
+                ServerClick(GameManager.Instance.player);
+            }
+            else
+            {
+                GameManager.Instance.player.EnterRoom(this);
+            }
         }
     }
 
@@ -79,17 +87,6 @@ public class Room : NetworkBehaviour, IPointerClickHandler
             return;
         }
         return;
-        if (HaveAliveEnemy() && !isSortedPos)
-        {
-            timer += Time.deltaTime;
-
-            if (timer >= 1f)
-            {
-                timer = 0f;
-                ClientChangeEnemyPos();
-            }
-        }
-
     }
 
     private void GridPos_OnChange(Vector2Int prev, Vector2Int next, bool asServer)
@@ -117,19 +114,34 @@ public class Room : NetworkBehaviour, IPointerClickHandler
         //if (asServer) return;
         if (asServer)
         {
-            Debug.Log("服务器修改了角色列表,不排序");
+            // Debug.Log("服务器修改了角色列表,不排序");
         }
-        Debug.Log("客户端排序");
+        // Debug.Log("客户端排序");
 
         // 👉 只关心“新增”
-        if (op == SyncListOperation.Add)
+        if (op == SyncListOperation.Add && newItem is Enemy)
         {
-            if (newItem is Enemy)
+            Debug.Log("有敌人加入，重新排序");
+            ClientChangeEnemyPos();
+        }
+        if (GameManager.Instance.player.currentRoom.Value == this)
+        {
+            if (op == SyncListOperation.Add && newItem is Player playerAdd)
             {
-                Debug.Log("有敌人加入，重新排序");
-                ClientChangeEnemyPos();
+                Debug.Log("玩家加入，显示血条");
+                playerAdd.healthBar.gameObject.SetActive(true);
+                playerAdd.healthBar.ui.UpdateLayoutHealthBar();
+            }
+
+            else if ((op == SyncListOperation.RemoveAt) && oldItem is Player playerRemove)
+            {
+                Debug.Log("玩家移除，隐藏血条");
+                playerRemove.healthBar.gameObject.SetActive(false);
+                playerRemove.healthBar.ui.UpdateLayoutHealthBar();
             }
         }
+
+
     }
     public void DebugLogs()
     {
@@ -274,7 +286,25 @@ public class Room : NetworkBehaviour, IPointerClickHandler
         {
             mapManager.exitButtom.SetActive(false);
         }
-
+        foreach (var r in GameManager.Instance.player.healthBar.ui.bars)
+        {
+            if (r.gameObject != GameManager.Instance.player.healthBar.gameObject)
+            {
+                if (r.gameObject.GetComponent<PlayerHealthBar>().player.currentRoom.Value != GameManager.Instance.player.currentRoom.Value)
+                {
+                    r.gameObject.SetActive(false);
+                }
+                else
+                {
+                    r.gameObject.SetActive(true);
+                }
+            }
+            else
+            {
+                r.gameObject.SetActive(true);
+            }
+        }
+        GameManager.Instance.player.healthBar.ui.UpdateLayoutHealthBar();
     }
     public void ClientChangeEnemyPos()
     {
@@ -319,15 +349,6 @@ public class Room : NetworkBehaviour, IPointerClickHandler
 
             aliveEnemies[i].transform.position = new Vector3(x, y, z);
             aliveEnemies[i].sortingGroup.sortingOrder = -i; // 确保后生成的敌人覆盖前一个
-        }
-        if (aliveEnemies.Count > 0)
-        {
-            Debug.Log("至少给一个敌人排序");
-            isSortedPos = true;
-        }
-        else
-        {
-            Debug.Log("排序但没敌人");
         }
     }
     /// <summary>

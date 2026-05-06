@@ -10,6 +10,7 @@ TagManager:
   - PlayerHPBarUI
   - CharacterImage
   - PropBox
+  - PlayerHPBar
   layers:
   - Default
   - TransparentFX
@@ -55,4 +56,7 @@ TagManager:
     locked: 0
   - name: Card
     uniqueID: 1169161997
+    locked: 0
+  - name: Front
+    uniqueID: 3271861155
     locked: 0

@@ -36,7 +36,16 @@ public class Character : NetworkBehaviour
     {
         base.OnStartClient();
         HP.OnChange += HP_OnChange;
+        block.OnChange += Block_OnChange;
     }
+    public override void OnStopClient()
+    {
+        base.OnStopClient();
+        HP.OnChange -= HP_OnChange;
+        block.OnChange -= Block_OnChange;
+    }
+
+
     //这里写的子类并不能直接调用,请复制粘贴
     //按理来说,rpc方法应该直接在父类里面调用外部方法,然后子类不去重写,但是我已经写了所以懒得改了
     [ServerRpc(RequireOwnership = false)]
@@ -71,10 +80,24 @@ public class Character : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public virtual void TakeDamage(int damage)
     {
+        if (damage > block.Value)
+        {
+            damage -= block.Value;
+            block.Value = 0;
+            if (this is Enemy)
+            {
+                DTextManager.Instance.CreateHurtText(transform, -damage);
+            }
+        }
+        else
+        {
+            block.Value -= damage;
+            damage = 0;
+        }
         HP.Value -= damage;
         if (HP.Value <= 0)
         {
-            Debug.Log(name + "死亡");
+            // Debug.Log(name + "死亡");
             isDead.Value = true;
 
 
@@ -123,6 +146,7 @@ public class Character : NetworkBehaviour
             HP.Value += heal;
         }
     }
+    [ServerRpc(RequireOwnership = false)]
     public virtual void Heal(float healPercent)
     {
         int heal = Mathf.CeilToInt(maxHP.Value * healPercent);
@@ -135,7 +159,11 @@ public class Character : NetworkBehaviour
             HP.Value += heal;
         }
     }
-
+    [ServerRpc(RequireOwnership = false)]
+    public virtual void TakeBlock(int i)
+    {
+        block.Value += i;
+    }
     #endregion
 
     #region 客户端获取数值
@@ -153,6 +181,10 @@ public class Character : NetworkBehaviour
     public virtual void HP_OnChange(int prev, int next, bool asServer)
     {
         _HP = next;
+    }
+    public virtual void Block_OnChange(int prev, int next, bool asServer)
+    {
+
     }
     #endregion
 

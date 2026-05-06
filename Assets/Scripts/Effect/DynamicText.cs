@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DynamicText : MonoBehaviour
 {
-    public TextMeshPro text;
+    public TextMeshPro tmp;
     public bool upEffect = true;
     public bool blockEffect = false;
     void Start()
@@ -39,24 +39,24 @@ public class DynamicText : MonoBehaviour
 
     public void ChangeToHurtText(int i)
     {
-        text.text = i.ToString();
+        tmp.text = i.ToString();
         if (i < 0)
         {
-            text.color = Color.red;
+            tmp.color = Color.red;
         }
         if (i > 0)
         {
-            text.color = Color.green;
+            tmp.color = Color.green;
         }
         if (i == 0)
         {
-            text.color = Color.blue;
+            tmp.color = Color.blue;
         }
     }
 
     public void ChangeToBlockText()
     {
-        text.color = Color.white;
+        tmp.color = Color.white;
     }
 
     private void OnDestroy()
