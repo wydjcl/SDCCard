@@ -11,6 +11,7 @@ TagManager:
   - CharacterImage
   - PropBox
   - PlayerHPBar
+  - PlayerZone
   layers:
   - Default
   - TransparentFX

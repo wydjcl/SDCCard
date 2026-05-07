@@ -14,9 +14,10 @@ public class DTextManager : SingletonMono<DTextManager>
         var dt = Instantiate(textPrefab).GetComponent<DynamicText>();
         dt.tmp.text = s;
     }
-    public void CreateText(Transform t)
+    public void CreateText(Transform t, string s)
     {
-        Instantiate(textPrefab, t);
+        var dt = Instantiate(textPrefab, t).GetComponent<DynamicText>();
+        dt.tmp.text = s;
     }
     /// <summary>
     /// 创建受伤或者治疗的动态文本,负数为伤害

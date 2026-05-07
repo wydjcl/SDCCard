@@ -8,11 +8,19 @@ using UnityEngine.TextCore.LowLevel;
 /// </summary>
 public class Dic : SingletonMono<Dic>
 {
+    [Header("卡牌预制体")]
     public GameObject cardPrefab;
     public GameObject dynamicTextPrefab;
+    [Header("道具预制体")]
     public GameObject propPrefab;
+    [Header("道具格子预制体")]
     public GameObject propBoxPrefab;
+    [Header("宝藏点预制体")]
     public NetworkObject chestPrefab;
+    [Header("战斗中玩家预制体")]
+    public GameObject player_BPrefab;
+
+    public List<PData> pDatas = new List<PData>();
     /// <summary>
     /// 敌人
     /// </summary>

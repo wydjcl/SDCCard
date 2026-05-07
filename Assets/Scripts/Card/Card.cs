@@ -71,6 +71,7 @@ public class Card : MonoBehaviour
         {
             caster.ChangeCost(-cardCost);
         }
+        caster.ServerUseCardAniRpc(cardName);
         foreach (CardEffectSO so in cardEffectSOs)
         {
             so.ApplyEffect(caster, target, this);

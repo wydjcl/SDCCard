@@ -39,6 +39,7 @@ public class Player : Character
     public TextMeshProUGUI mapPosText;
 
     public PlayerHealthBar healthBar;//血条
+    public Player_B player_B;
 
     private GameObject mainUI;
 
@@ -125,22 +126,14 @@ public class Player : Character
         isDead.Value = false;
         isAction.Value = false;
         isGo.Value = false;
-        if (i == 0)
-        {
-            maxHP.Value = 770;
-            HP.Value = 770;
-            attack.Value = 15;
-            speed.Value = 50;
-            cost.Value = 77;
-        }
-        else if (i == 1)
-        {
-            maxHP.Value = 50;
-            HP.Value = 50;
-            attack.Value = 6;
-            speed.Value = 50;
-            cost.Value = 66;
-        }
+
+        var data = Dic.Instance.pDatas[i];
+        maxHP.Value = data.maxHp;
+        HP.Value = data.maxHp;
+        attack.Value = data.attack;
+        speed.Value = data.speed;
+        cost.Value = data.cost;
+
     }
     [ServerRpc(RequireOwnership = false)]
     public void InitDeck()
@@ -288,6 +281,9 @@ public class Player : Character
     }
 
     #endregion
+
+
+
 
     #region 卡牌
 
@@ -521,6 +517,48 @@ public class Player : Character
 
 
     #endregion
+
+    #region 动画效果
+    [ServerRpc(RequireOwnership = false)]
+    public void ServerUseCardAniRpc(string cardName)
+    {
+        ClientUseCardAni(cardName);
+    }
+    [ObserversRpc]
+    public void ClientUseCardAni(string cardName)
+    {
+        if (this.player_B.gameObject.activeSelf)
+        {
+            DTextManager.Instance.CreateText(player_B.AniUI.transform, cardName);
+
+            DG.Tweening.Sequence seq = DOTween.Sequence();
+            seq.SetLink(player_B.AniUI.gameObject);
+
+            seq.Append(player_B.AniUI.transform.DORotate(new Vector3(0, 0, -15f), 0.2f).SetEase(Ease.InOutSine));
+            seq.Append(player_B.AniUI.transform.DORotate(new Vector3(0, 0, 15f), 0.2f).SetEase(Ease.InOutSine));
+            seq.Append(player_B.AniUI.transform.DORotate(Vector3.zero, 0.2f).SetEase(Ease.InOutSine));
+
+        }
+    }
+
+    public override void ClientTakeDamageAni()
+    {
+        DG.Tweening.Sequence seq = DOTween.Sequence();
+        seq.Append(player_B.playerSprite.DOFade(0.4f, 0.08f));
+        seq.Append(player_B.playerSprite.DOFade(1f, 0.08f));
+        seq.Append(player_B.playerSprite.DOFade(0.4f, 0.08f));
+        seq.Append(player_B.playerSprite.DOFade(1f, 0.1f));
+        seq.SetLink(player_B.playerSprite.gameObject);
+    }
+
+
+
+    #endregion
+
+
+
+
+
     #region 同步字段回调
     private void PlayerName_OnChange(string prev, string next, bool asServer)
     {
@@ -567,6 +605,10 @@ public class Player : Character
                 healthBar.hpText.text = $"{HP.Value}/{maxHP.Value}({block.Value})";
             }
             healthBar.healthImage.fillAmount = (float)HP.Value / (float)maxHP.Value;
+        }
+        if (player_B)
+        {
+            player_B.hpText.text = HP.Value.ToString();
         }
     }
 

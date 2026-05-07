@@ -74,9 +74,9 @@ public class CardPhysicallyEffect : MonoBehaviour, IBeginDragHandler, IDragHandl
                 }
                 if (eventData.pointerEnter.CompareTag("Player") && card.cardType == CardType.PAffectCard)
                 {
-                    if (eventData.pointerEnter.GetComponentInParent<PlayerHealthBar>() != null)
+                    if (eventData.pointerEnter.GetComponent<Player_B>() != null)
                     {
-                        var bar = eventData.pointerEnter.GetComponentInParent<PlayerHealthBar>();
+                        var bar = eventData.pointerEnter.GetComponent<Player_B>();
                         target = bar.player;
                         // target = eventData.pointerEnter.GetComponent<Player>();
                         canEcecute = true;

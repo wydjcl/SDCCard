@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 651dd775e8777e144b6c2066adddc5e1, type: 3}
+  m_Name: "\u73A9\u5BB6\u6570\u636E_0"
+  m_EditorClassIdentifier: 
+  playerSprite: {fileID: 21300000, guid: 40c8fbb61a6a293419f744fa8392df25, type: 3}
+  maxHp: 777
+  attack: 15
+  cost: 66
+  speed: 55
+  cards: []

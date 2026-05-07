@@ -88,6 +88,10 @@ public class Character : NetworkBehaviour
             {
                 DTextManager.Instance.CreateHurtText(transform, -damage);
             }
+            else if (this is Player p)
+            {
+                DTextManager.Instance.CreateHurtText(p.player_B.AniUI.transform, -damage);
+            }
         }
         else
         {

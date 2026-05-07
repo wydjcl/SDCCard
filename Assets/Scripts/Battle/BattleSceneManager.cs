@@ -32,6 +32,21 @@ public class BattleSceneManager : MonoBehaviour
     private void Start()
     {
         GameManager.Instance.player.CreateCard();
+
+        var dir = new Vector2[] {
+             new Vector2(-5,-1),
+              new Vector2(-5,3.5f),
+             new Vector2(-8.5f,-1),
+             new Vector2(-8.5f,3.5f)
+};
+
+        for (int i = 0; i < GameManager.Instance.players.Count; i++)
+        {
+            var pb = Instantiate(Dic.Instance.player_BPrefab).GetComponent<Player_B>();
+            pb.Init(GameManager.Instance.players[i]);
+            pb.transform.localPosition = dir[i];
+        }
+
     }
     void Update()
     {

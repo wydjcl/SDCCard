@@ -131,6 +131,8 @@ public class Room : NetworkBehaviour, IPointerClickHandler
                 Debug.Log("玩家加入，显示血条");
                 playerAdd.healthBar.gameObject.SetActive(true);
                 playerAdd.healthBar.ui.UpdateLayoutHealthBar();
+
+                playerAdd.player_B.gameObject.SetActive(true);//TODO动画结束后再显示
             }
 
             else if ((op == SyncListOperation.RemoveAt) && oldItem is Player playerRemove)
@@ -138,6 +140,8 @@ public class Room : NetworkBehaviour, IPointerClickHandler
                 Debug.Log("玩家移除，隐藏血条");
                 playerRemove.healthBar.gameObject.SetActive(false);
                 playerRemove.healthBar.ui.UpdateLayoutHealthBar();
+
+                playerRemove.player_B.gameObject.SetActive(false);
             }
         }
 
@@ -286,6 +290,20 @@ public class Room : NetworkBehaviour, IPointerClickHandler
         {
             mapManager.exitButtom.SetActive(false);
         }
+        //进房间后显示房间的玩家对象,TODO添加动画
+        foreach (var c in GameManager.Instance.players)
+        {
+            c.player_B.gameObject.SetActive(false);
+        }
+
+        foreach (var c in characters)
+        {
+            if (c is Player p)
+            {
+                p.player_B.gameObject.SetActive(true);
+            }
+        }
+
         foreach (var r in GameManager.Instance.player.healthBar.ui.bars)
         {
             if (r.gameObject != GameManager.Instance.player.healthBar.gameObject)
@@ -319,37 +337,55 @@ public class Room : NetworkBehaviour, IPointerClickHandler
                 }
             }
         }
+        var dir = new Vector2[]
+        {
+            new Vector2(1, -1),
+            new Vector2(1, 3.5f),
+            new Vector2(4.5f, -1),
+            new Vector2(4.5f, 3.5f),
+             new Vector2(8f, -1),
+            new Vector2(8f, 3.5f),
+             new Vector2(11.5f, -1),
+            new Vector2(11.5f, 3.5f),
+
+        };
+
         //if (aliveEnemies.Count > 0)
         //{
         //    aliveEnemies[0].transform.position = new Vector3(0, 3, 0);//TODO根据存活敌人改变位置
         //    aliveEnemies[1].transform.position = new Vector3(-5, 3, 0);
         //    aliveEnemies[2].transform.position = new Vector3(-5, 3, 0);
         //}
-        float baseSpacing = 7;
-        float compress = Mathf.Clamp(1f - aliveEnemies.Count * 0.05f, 0.3f, 1f);//压缩系数,0-0.5,最后乘上基础距离
 
         for (int i = 0; i < aliveEnemies.Count; i++)
         {
-            int order = (i + 1) / 2;
-
-            float offset = order * baseSpacing * compress;
-
-            float x = 0;
-            float y = order * 0.75f;
-
-            if (i == 0)
-                x = 0;
-            else if (i % 2 == 1)
-                x = offset;
-            else
-                x = -offset;
-
-            // ⭐ 关键：Z 层级
-            float z = i * 0.1f;
-
-            aliveEnemies[i].transform.position = new Vector3(x, y, z);
-            aliveEnemies[i].sortingGroup.sortingOrder = -i; // 确保后生成的敌人覆盖前一个
+            aliveEnemies[i].transform.position = dir[i];
         }
+        //float baseSpacing = 7;
+        //float compress = Mathf.Clamp(1f - aliveEnemies.Count * 0.05f, 0.3f, 1f);//压缩系数,0-0.5,最后乘上基础距离
+
+        //for (int i = 0; i < aliveEnemies.Count; i++)
+        //{
+        //    int order = (i + 1) / 2;
+
+        //    float offset = order * baseSpacing * compress;
+
+        //    float x = 0;
+        //    float y = order * 0.75f;
+
+        //    if (i == 0)
+        //        x = 0;
+        //    else if (i % 2 == 1)
+        //        x = offset;
+        //    else
+        //        x = -offset;
+
+        //    // ⭐ 关键：Z 层级
+        //    float z = i * 0.1f;
+
+        //    aliveEnemies[i].transform.position = new Vector3(x, y, z);
+        //    aliveEnemies[i].sortingGroup.sortingOrder = -i; // 确保后生成的敌人覆盖前一个
+        //}
     }
     /// <summary>
     /// 开始战斗后,创建卡片,暂无用

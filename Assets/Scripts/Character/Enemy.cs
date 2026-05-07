@@ -3,6 +3,7 @@ using FishNet.Object;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -16,9 +17,11 @@ public class Enemy : Character
     public EnemyData enemyData;
     public GameObject Entry;
     public GameObject aniUI;
-    public Image HPBar;
+
     public SpriteRenderer enemySprite;
     public SortingGroup sortingGroup;
+    public TextMeshPro HPText;
+    public TextMeshPro AttackText;
 
 
     [Header("设定数值")]
@@ -52,7 +55,8 @@ public class Enemy : Character
     protected virtual void Update()
     {
         currentFill = Mathf.Lerp(currentFill, targetFill, Time.deltaTime * 11f);
-        HPBar.fillAmount = currentFill;
+
+        AttackText.text = Attack().ToString();
     }
     //[ServerRpc(RequireOwnership = false)]
     //public override void TurnStart()
@@ -106,9 +110,15 @@ public class Enemy : Character
         DG.Tweening.Sequence seq = DOTween.Sequence();
 
 
-        seq.SetLink(aniUI);
-        seq.Append(aniUI.transform.DOScale(1.2f, 0.3f));
-        seq.Append(aniUI.transform.DOScale(1f, 0.3f));
+        //seq.SetLink(aniUI);
+        //seq.Append(aniUI.transform.DOScale(1.2f, 0.3f));
+        //seq.Append(aniUI.transform.DOScale(1f, 0.3f));
+
+        seq.SetLink(aniUI.gameObject);
+
+        seq.Append(aniUI.transform.DORotate(new Vector3(0, 0, 15f), 0.2f).SetEase(Ease.InOutSine));
+        seq.Append(aniUI.transform.DORotate(new Vector3(0, 0, -15f), 0.2f).SetEase(Ease.InOutSine));
+        seq.Append(aniUI.transform.DORotate(Vector3.zero, 0.2f).SetEase(Ease.InOutSine));
 
         yield return seq.WaitForCompletion(); // ⭐关键
 
@@ -141,5 +151,6 @@ public class Enemy : Character
     public override void HP_OnChange(int prev, int next, bool asServer)
     {
         targetFill = (float)next / (float)maxHP.Value;
+        HPText.text = next.ToString();
     }
 }
