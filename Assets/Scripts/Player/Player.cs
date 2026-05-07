@@ -127,7 +127,7 @@ public class Player : Character
         isAction.Value = false;
         isGo.Value = false;
 
-        var data = Dic.Instance.pDatas[i];
+        var data = Dic.Instance.characterDatas[i];
         maxHP.Value = data.maxHp;
         HP.Value = data.maxHp;
         attack.Value = data.attack;

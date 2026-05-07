@@ -20,7 +20,7 @@ public class Dic : SingletonMono<Dic>
     [Header("战斗中玩家预制体")]
     public GameObject player_BPrefab;
 
-    public List<PData> pDatas = new List<PData>();
+    public List<CharacterData> characterDatas = new List<CharacterData>();
     /// <summary>
     /// 敌人
     /// </summary>

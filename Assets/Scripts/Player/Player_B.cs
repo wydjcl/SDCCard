@@ -22,7 +22,7 @@ public class Player_B : MonoBehaviour
         player = p;
         p.player_B = this;
         transform.SetParent(GameObject.FindGameObjectWithTag("PlayerZone").transform);
-        playerSprite.sprite = Dic.Instance.pDatas[p.characterID.Value].playerSprite;
+        playerSprite.sprite = Dic.Instance.characterDatas[p.characterID.Value].playerSprite;
 
         attackText.text = p.Attack().ToString();
         hpText.text = p.HP.Value.ToString();
