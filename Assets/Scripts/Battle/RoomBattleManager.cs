@@ -65,7 +65,9 @@ public class RoomBattleManager : NetworkBehaviour
     {
         Debug.Log("开始战斗");
     }
-
+    /// <summary>
+    /// 战斗结束后角色类的处理
+    /// </summary>
     [ServerRpc(RequireOwnership = false)]
     public void EndBattle()
     {
@@ -76,6 +78,8 @@ public class RoomBattleManager : NetworkBehaviour
             //    player.CreateCard();
             //}
             character.isAction.Value = false;
+            character.block.Value = 0;
+            character.RemoveAllBuff();
         }
     }
     [Server]
@@ -203,6 +207,11 @@ public class RoomBattleManager : NetworkBehaviour
         BattleSceneManager.Instance.turnButtom.SetActive(false);
         GameManager.Instance.player.CreateCard();
         GameManager.Instance.player.InitState();
+        if (GameManager.Instance.player.isDead.Value)
+        {
+            GameManager.Instance.player.HP.Value += 1;
+            GameManager.Instance.player.isDead.Value = false;
+        }
     }
 
     [TargetRpc]

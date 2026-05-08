@@ -17,10 +17,15 @@ public class Character : NetworkBehaviour
     public readonly SyncVar<int> defense = new SyncVar<int>();//防御力
     public readonly SyncVar<int> speed = new SyncVar<int>();//速度
     [Header("额外属性")]
-    public readonly SyncVar<int> attackEX = new SyncVar<int>();//攻击力
-    public readonly SyncVar<int> defenseEX = new SyncVar<int>();//防御力
-    public readonly SyncVar<int> speedEX = new SyncVar<int>();//速度
+    public readonly SyncVar<int> attackEX = new SyncVar<int>();//攻击力固定数值增加
+    public readonly SyncVar<int> defenseEX = new SyncVar<int>();//防御力固定数值增加
+    public readonly SyncVar<int> speedEX = new SyncVar<int>();//速度固定数值增加
+
+    public readonly SyncVar<float> attackPercent = new SyncVar<float>();//攻击力百分比数值增加
+    public readonly SyncVar<float> defensePercent = new SyncVar<float>();//防御力百分比数值增加
+    public readonly SyncVar<float> speedPercent = new SyncVar<float>();//速度百分比数值增加
     [Header("其他属性")]
+    public readonly SyncList<Buff> buffs = new SyncList<Buff>();
     public readonly SyncVar<int> block = new SyncVar<int>();//格挡值,回合开始时候清零
 
     [Header("战斗结算")]
@@ -63,6 +68,8 @@ public class Character : NetworkBehaviour
         block.Value = 0;//回合开始格挡值清零
         currentRoom.Value.roomBattleManager.noBodyAction = false;
         isAction.Value = true;
+
+        BuffTurnStart();
     }
     public virtual void ServerTurnEnd()
     {
@@ -168,6 +175,81 @@ public class Character : NetworkBehaviour
     {
         block.Value += i;
     }
+
+    [ServerRpc(RequireOwnership = false)]
+    public virtual void TakeAttackEX(int i)
+    {
+        Debug.Log("力量EX增加" + i);
+        attackEX.Value += i;
+    }
+    [ServerRpc(RequireOwnership = false)]
+    public virtual void TakeAttackPercent(float i)
+    {
+        Debug.Log("力量EX增加" + i);
+        attackPercent.Value += i;
+    }
+    #endregion
+
+    #region Buff方法
+
+    [ServerRpc(RequireOwnership = false)]
+    public void AddBuff(Buff newBuff)
+    {
+        bool isNew = true;
+        for (int i = 0; i < buffs.Count; i++)
+        {
+            if (buffs[i].buffName == newBuff.buffName)
+            {
+                isNew = false;
+                buffs[i].value += newBuff.value;
+                buffs[i].duration = newBuff.duration;
+                BuffManager.Instance.GetBuffEffect(newBuff).Apply(this, newBuff.value);
+                //newBuff.Apply(this, newBuff.value);
+                Debug.Log("这是老buff" + newBuff.buffName);
+                break;
+            }
+        }
+        if (isNew)
+        {
+            Debug.Log("这是新buff" + newBuff.buffName);
+            buffs.Add(newBuff);
+            BuffManager.Instance.GetBuffEffect(newBuff).Apply(this, newBuff.value);
+        }
+
+    }
+    [ServerRpc(RequireOwnership = false)]
+    public void RemoveAllBuff()
+    {
+        foreach (var b in buffs)
+        {
+            BuffManager.Instance.GetBuffEffect(b).Remove(this, b.value);
+        }
+        buffs.Clear();
+    }
+    [ServerRpc(RequireOwnership = false)]
+    public void BuffTurnStart()
+    {
+        foreach (var b in buffs)
+        {
+            BuffManager.Instance.GetBuffEffect(b).TurnStart(this, b.value);
+        }
+        for (int i = buffs.Count - 1; i >= 0; i--)
+        {
+            var b = buffs[i];
+            if (!b.forever)
+            {
+                b.duration--;
+            }
+            if (b.duration <= 0)
+            {
+                var effect = BuffManager.Instance.GetBuffEffect(b);
+                effect.Remove(this, b.value);
+
+                buffs.RemoveAt(i);
+            }
+        }
+    }
+
     #endregion
 
     #region 客户端获取数值
@@ -175,7 +257,7 @@ public class Character : NetworkBehaviour
     public virtual int Attack()//攻击里获得接口
     {
         int i = 0;
-        i = attack.Value + attackEX.Value;
+        i = Mathf.CeilToInt((attack.Value + attackEX.Value) * (1f + attackPercent.Value));
         return i;
     }
 
@@ -193,9 +275,15 @@ public class Character : NetworkBehaviour
     #endregion
 
 
-    [ContextMenu("测试")]
+    [ContextMenu("测试给BUff")]
     public void Test()
     {
-        TakeDamage(5);
+        Buff buff = new Buff();
+        buff.buffName = "力量Buff";
+        buff.value = 5;
+        buff.duration = 1;
+        buff.forever = true;
+        AddBuff(buff);
+        Debug.Log(Attack());
     }
 }

@@ -74,19 +74,19 @@ public class BattleSceneManager : MonoBehaviour
         //WSAD移动
         if (Vector2.Distance(mapRT.anchoredPosition, Vector2.zero) < 0.1f)
         {
-            if (Input.GetKeyDown(KeyCode.W))
+            if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
             {
                 mapManager.ClientMoveToRoomRpc(GameManager.Instance.player, GameManager.Instance.player.currentRoom.Value.gridPos.Value + Vector2Int.up);
             }
-            if (Input.GetKeyDown(KeyCode.A))
+            if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
             {
                 mapManager.ClientMoveToRoomRpc(GameManager.Instance.player, GameManager.Instance.player.currentRoom.Value.gridPos.Value + Vector2Int.left);
             }
-            if (Input.GetKeyDown(KeyCode.S))
+            if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
             {
                 mapManager.ClientMoveToRoomRpc(GameManager.Instance.player, GameManager.Instance.player.currentRoom.Value.gridPos.Value + Vector2Int.down);
             }
-            if (Input.GetKeyDown(KeyCode.D))
+            if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
             {
                 mapManager.ClientMoveToRoomRpc(GameManager.Instance.player, GameManager.Instance.player.currentRoom.Value.gridPos.Value + Vector2Int.right);
             }

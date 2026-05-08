@@ -36,6 +36,10 @@ public class Card : MonoBehaviour
     {
         transform.SetParent(GameObject.FindWithTag("CardZone").transform);
     }
+    private void Update()
+    {
+        cardDesText.text = RichTextHelper.ReplaceValues(dataSO.cardDes, GameManager.Instance.player.Attack());
+    }
     public void InitCard(CardDataSO so)
     {
         cardName = so.cardName;
