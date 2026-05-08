@@ -14,7 +14,7 @@ public class AOEAttack : CardEffectSO
             {
                 if (!e.isDead.Value)
                 {
-                    e.TakeDamage(Mathf.CeilToInt(caster.Attack() * percent));
+                    e.TakeDamage(caster, Mathf.CeilToInt(caster.Attack() * percent));
                 }
             }
         }

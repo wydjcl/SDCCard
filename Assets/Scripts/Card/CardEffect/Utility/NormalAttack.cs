@@ -6,8 +6,9 @@ public class NormalAttack : CardEffectSO
 {
     public int damage = 6;
     public float percent = 1f;
+    public int count = 1;
     public override void ApplyEffect(Player caster, Character target, Card card)
     {
-        target.TakeDamage(Mathf.CeilToInt(caster.Attack() * percent));
+        target.TakeDamage(caster, Mathf.CeilToInt(caster.Attack() * percent), count);
     }
 }

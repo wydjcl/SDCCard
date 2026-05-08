@@ -19,7 +19,7 @@ public class Boar : Enemy
         {
             if (c is Player player)
             {
-                c.TakeDamage(attack.Value);
+                c.TakeDamage(this, Attack());
             }
         }
         TurnEnd();

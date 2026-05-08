@@ -53,40 +53,6 @@ public enum EquipmentType
     Shoe
 }
 
-public enum RoomNodeType
-{
-    Start,
-    SmallEnemy,
-    BigEnemy,
-    Shop,
-    Event,
-    Bar,
-    Treasure,
-    Boss,
-    None
-}
-
-public enum RoomStage
-{
-    Visited,//已访问
-    CanVisit,//未访问但是可以访问
-    CantVisit//不可访问
-}
-
-/// <summary>
-/// 游戏当前所在阶段或者说场景
-/// </summary>
-public enum GameState
-{
-    Map,
-    Bar,
-    Battle,
-    Shop,
-    Treasure,
-    Delete,
-    Event,
-    CardBag,
-}
 
 public enum Quality
 {
@@ -118,6 +84,18 @@ public enum PropType
 /// 道具品质
 /// </summary>
 public enum PropRate
+{
+    white,
+    green,
+    blue,
+    purple,
+    gold,
+    red,
+}
+/// <summary>
+/// 道具品质
+/// </summary>
+public enum CardRate
 {
     white,
     green,

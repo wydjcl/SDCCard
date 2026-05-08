@@ -41,7 +41,6 @@ public class Enemy : Character
         maxHP.Value = enemyData.maxHP;
         speed.Value = enemyData.speed;
         attack.Value = enemyData.attack;
-        defense.Value = enemyData.denfense;
     }
     public override void OnStartClient()
     {
@@ -91,7 +90,8 @@ public class Enemy : Character
     [Server]
     public virtual void Act()
     {
-        Invoke("ServerMove", 0.6f);
+        Invoke("ServerMove", 0.4f);
+        // ServerMove();
         // ServerMove();
         ClientAni();
     }
@@ -117,7 +117,7 @@ public class Enemy : Character
         seq.SetLink(aniUI.gameObject);
 
         seq.Append(aniUI.transform.DORotate(new Vector3(0, 0, 15f), 0.2f).SetEase(Ease.InOutSine));
-        seq.Append(aniUI.transform.DORotate(new Vector3(0, 0, -15f), 0.2f).SetEase(Ease.InOutSine));
+        //seq.Append(aniUI.transform.DORotate(new Vector3(0, 0, -15f), 0.2f).SetEase(Ease.InOutSine));
         seq.Append(aniUI.transform.DORotate(Vector3.zero, 0.2f).SetEase(Ease.InOutSine));
 
         yield return seq.WaitForCompletion(); // ⭐关键
@@ -152,5 +152,13 @@ public class Enemy : Character
     {
         targetFill = (float)next / (float)maxHP.Value;
         HPText.text = next.ToString();
+    }
+    public override void AttackEX_OnChange(int prev, int next, bool asServer)
+    {
+        AttackText.text = Attack().ToString();
+    }
+    public override void AttackPercent_OnChange(float prev, float next, bool asServer)
+    {
+        AttackText.text = Attack().ToString();
     }
 }

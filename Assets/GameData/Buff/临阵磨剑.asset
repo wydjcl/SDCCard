@@ -9,13 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff32a80823644804b91999829943ac8b, type: 3}
-  m_Name: "\u73A9\u5BB6\u89D2\u8272\u6570\u636E_0"
+  m_Script: {fileID: 11500000, guid: eddaed1f89f3a3244807f295fa1efc60, type: 3}
+  m_Name: "\u4E34\u9635\u78E8\u5251"
   m_EditorClassIdentifier: 
-  playerSprite: {fileID: 21300000, guid: 40c8fbb61a6a293419f744fa8392df25, type: 3}
-  maxHp: 777
-  attack: 15
-  defense: 0.1
-  speed: 55
-  cost: 66
-  cards: []
+  buffName: "\u4E34\u9635\u78E8\u5251"
+  buffSprite: {fileID: 0}

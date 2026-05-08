@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,7 +8,9 @@ public class CharacterData : ScriptableObject
     public Sprite playerSprite;
     public int maxHp;
     public int attack;
-    public int cost;
+    public float defense;
     public int speed;
+    public int cost;
+
     public List<CardDataSO> cards;
 }

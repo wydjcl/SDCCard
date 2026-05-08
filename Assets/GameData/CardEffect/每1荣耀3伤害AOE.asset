@@ -9,13 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff32a80823644804b91999829943ac8b, type: 3}
-  m_Name: "\u73A9\u5BB6\u89D2\u8272\u6570\u636E_0"
+  m_Script: {fileID: 11500000, guid: 40e821d62677be74e80f28a9def8ce74, type: 3}
+  m_Name: "\u6BCF1\u8363\u80003\u4F24\u5BB3AOE"
   m_EditorClassIdentifier: 
-  playerSprite: {fileID: 21300000, guid: 40c8fbb61a6a293419f744fa8392df25, type: 3}
-  maxHp: 777
-  attack: 15
-  defense: 0.1
-  speed: 55
-  cost: 66
-  cards: []
+  percent: 1.2
+  gloryCount: 5
+  attack: 3
+  byGlory: 1
+  gloryAttack: 3
+  byGloryPercent: 1
+  isAOE: 1

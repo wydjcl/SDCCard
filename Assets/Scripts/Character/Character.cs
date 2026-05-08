@@ -1,5 +1,6 @@
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
+using GameKit.Dependencies.Utilities;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,20 +15,25 @@ public class Character : NetworkBehaviour
     public readonly SyncVar<int> HP = new SyncVar<int>();
     public readonly SyncVar<int> maxHP = new SyncVar<int>();
     public readonly SyncVar<int> attack = new SyncVar<int>();//攻击力
-    public readonly SyncVar<int> defense = new SyncVar<int>();//防御力
+    //public readonly SyncVar<float> defense = new SyncVar<float>();//防御力
     public readonly SyncVar<int> speed = new SyncVar<int>();//速度
     [Header("额外属性")]
     public readonly SyncVar<int> attackEX = new SyncVar<int>();//攻击力固定数值增加
-    public readonly SyncVar<int> defenseEX = new SyncVar<int>();//防御力固定数值增加
+    //public readonly SyncVar<float> defenseEX = new SyncVar<float>();//防御力固定数值增加
     public readonly SyncVar<int> speedEX = new SyncVar<int>();//速度固定数值增加
 
+    //public readonly SyncVar<float> AP = new SyncVar<float>();//穿甲数值
+
     public readonly SyncVar<float> attackPercent = new SyncVar<float>();//攻击力百分比数值增加
-    public readonly SyncVar<float> defensePercent = new SyncVar<float>();//防御力百分比数值增加
+    //public readonly SyncVar<float> defensePercent = new SyncVar<float>();//防御力百分比数值增加
     public readonly SyncVar<float> speedPercent = new SyncVar<float>();//速度百分比数值增加
     [Header("其他属性")]
     public readonly SyncList<Buff> buffs = new SyncList<Buff>();
     public readonly SyncVar<int> block = new SyncVar<int>();//格挡值,回合开始时候清零
-
+    public readonly SyncVar<int> blockEX = new SyncVar<int>();//格挡值增量,每次增加格挡值时多增长的量
+    [Header("特殊词条")]
+    public readonly SyncVar<int> glory = new SyncVar<int>();//荣耀,暂定每层1%攻击和防御力,上限20层,TODO技能树增加每层数值和上限
+    public readonly SyncVar<int> gloryBlockEX = new SyncVar<int>();//荣耀的格挡值增量,每五层荣耀+1
     [Header("战斗结算")]
     public readonly SyncVar<bool> isAction = new SyncVar<bool>();//正在行动
     public readonly SyncVar<bool> isDead = new SyncVar<bool>();//死亡
@@ -42,12 +48,21 @@ public class Character : NetworkBehaviour
         base.OnStartClient();
         HP.OnChange += HP_OnChange;
         block.OnChange += Block_OnChange;
+        attackEX.OnChange += AttackEX_OnChange;
+        attackPercent.OnChange += AttackPercent_OnChange;
+        glory.OnChange += Glory_OnChange;
     }
+
+
+
     public override void OnStopClient()
     {
         base.OnStopClient();
         HP.OnChange -= HP_OnChange;
         block.OnChange -= Block_OnChange;
+        attackEX.OnChange -= AttackEX_OnChange;
+        attackPercent.OnChange -= AttackPercent_OnChange;
+        glory.OnChange -= Glory_OnChange;
     }
 
 
@@ -79,14 +94,17 @@ public class Character : NetworkBehaviour
         }
         currentRoom.Value.roomBattleManager.noBodyAction = true;
         isAction.Value = false;
+        BuffTurnEnd();
     }
     #endregion
 
     #region 一些网络方法
 
     [ServerRpc(RequireOwnership = false)]
-    public virtual void TakeDamage(int damage)
+    public virtual void TakeDamage(Character caster, int damage, int count = 1)
     {
+        //先减去防御力数值,如果比防御力低就变成1点伤害
+
         if (damage > block.Value)
         {
             damage -= block.Value;
@@ -123,9 +141,19 @@ public class Character : NetworkBehaviour
             }
             currentRoom.Value.roomBattleManager.DeadCheck();
         }
-
         ServerTakeDamageAni();
+        if (count > 1)
+        {
+            StartCoroutine(RepeatDamage(caster, damage, count - 1));
+        }
     }
+
+    private IEnumerator RepeatDamage(Character caster, int damage, int count)
+    {
+        yield return new WaitForSeconds(0.3f);
+        TakeDamage(caster, damage, count);
+    }
+
     public virtual void ServerEnemyDead()//服务器处理敌人死后
     {
     }
@@ -173,21 +201,38 @@ public class Character : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public virtual void TakeBlock(int i)
     {
+        i = i + BlockEX();
         block.Value += i;
     }
 
     [ServerRpc(RequireOwnership = false)]
     public virtual void TakeAttackEX(int i)
     {
-        Debug.Log("力量EX增加" + i);
+        // Debug.Log("力量EX增加" + i);
         attackEX.Value += i;
     }
     [ServerRpc(RequireOwnership = false)]
     public virtual void TakeAttackPercent(float i)
     {
-        Debug.Log("力量EX增加" + i);
+        //Debug.Log("力量EX增加" + i);
         attackPercent.Value += i;
     }
+
+    [ServerRpc(RequireOwnership = false)]
+    public virtual void TakeGlory(int i)
+    {
+        if (glory.Value + i > 20)
+        {
+            Debug.Log("荣耀超过20,调整");
+            glory.Value = 20;
+        }
+        else
+        {
+            glory.Value += i;
+        }
+    }
+
+
     #endregion
 
     #region Buff方法
@@ -205,13 +250,13 @@ public class Character : NetworkBehaviour
                 buffs[i].duration = newBuff.duration;
                 BuffManager.Instance.GetBuffEffect(newBuff).Apply(this, newBuff.value);
                 //newBuff.Apply(this, newBuff.value);
-                Debug.Log("这是老buff" + newBuff.buffName);
+                //Debug.Log("这是老buff" + newBuff.buffName);
                 break;
             }
         }
         if (isNew)
         {
-            Debug.Log("这是新buff" + newBuff.buffName);
+            // Debug.Log("这是新buff" + newBuff.buffName);
             buffs.Add(newBuff);
             BuffManager.Instance.GetBuffEffect(newBuff).Apply(this, newBuff.value);
         }
@@ -233,6 +278,14 @@ public class Character : NetworkBehaviour
         {
             BuffManager.Instance.GetBuffEffect(b).TurnStart(this, b.value);
         }
+    }
+    [ServerRpc(RequireOwnership = false)]
+    public void BuffTurnEnd()
+    {
+        foreach (var b in buffs)
+        {
+            BuffManager.Instance.GetBuffEffect(b).TurnEnd(this, b.value);
+        }
         for (int i = buffs.Count - 1; i >= 0; i--)
         {
             var b = buffs[i];
@@ -249,7 +302,6 @@ public class Character : NetworkBehaviour
             }
         }
     }
-
     #endregion
 
     #region 客户端获取数值
@@ -257,7 +309,22 @@ public class Character : NetworkBehaviour
     public virtual int Attack()//攻击里获得接口
     {
         int i = 0;
-        i = Mathf.CeilToInt((attack.Value + attackEX.Value) * (1f + attackPercent.Value));
+        i = Mathf.RoundToInt((attack.Value + attackEX.Value) * (attackPercent.Value + 1f));//因为浮点数不精确的原因,所以需要四舍五入而不是取上
+        return i;
+    }
+
+    [Client]
+    public virtual int Speed()
+    {
+        int i = 0;
+        i = Mathf.RoundToInt((speed.Value + speedEX.Value) * (speedPercent.Value + 1f));//因为浮点数不精确的原因,所以需要四舍五入而不是取上
+        return i;
+    }
+    [Client]
+    public virtual int BlockEX()
+    {
+        int i = 0;
+        i = blockEX.Value;
         return i;
     }
 
@@ -271,6 +338,16 @@ public class Character : NetworkBehaviour
     public virtual void Block_OnChange(int prev, int next, bool asServer)
     {
 
+    }
+    public virtual void AttackPercent_OnChange(float prev, float next, bool asServer)
+    {
+    }
+
+    public virtual void AttackEX_OnChange(int prev, int next, bool asServer)
+    {
+    }
+    public virtual void Glory_OnChange(int prev, int next, bool asServer)
+    {
     }
     #endregion
 

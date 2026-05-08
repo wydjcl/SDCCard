@@ -73,12 +73,9 @@ public class RoomBattleManager : NetworkBehaviour
     {
         foreach (var character in room.characters)
         {
-            //if (character is Player player)
-            //{
-            //    player.CreateCard();
-            //}
             character.isAction.Value = false;
             character.block.Value = 0;
+            character.glory.Value = 0;
             character.RemoveAllBuff();
         }
     }

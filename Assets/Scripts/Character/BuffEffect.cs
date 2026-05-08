@@ -15,6 +15,9 @@ public class BuffEffect : ScriptableObject
     public virtual void TurnStart(Character character, int value)
     {
     }
+    public virtual void TurnEnd(Character character, int value)
+    {
+    }
 }
 
 public class Buff

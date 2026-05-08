@@ -4,10 +4,11 @@ using UnityEngine;
 public class CardDataSO : ScriptableObject
 {
     public string cardName;
+    public Sprite cardImage;
     public int cardCost;
     public int cardCoin;
     public CardType cardType;
-    public Sprite cardImage;
+    public CardRate cardRate;
     [TextArea]
     public string cardDes;
 

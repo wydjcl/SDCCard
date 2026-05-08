@@ -142,20 +142,30 @@ public class Player : Character
         {
             cardNameList.Clear();
             cardNameList.Add("给你一拳");
-            cardNameList.Add("给你一拳");
-            cardNameList.Add("给你一拳");
-            cardNameList.Add("给你一拳");
-            cardNameList.Add("给你一拳");
+            //cardNameList.Add("给你一拳");
+            //cardNameList.Add("给你一拳");
+            //cardNameList.Add("给你一拳");
+            //cardNameList.Add("给你一拳");
             cardNameList.Add("基础魔法屏障");
-            cardNameList.Add("基础魔法屏障");
-            cardNameList.Add("基础魔法屏障");
-            cardNameList.Add("基础魔法屏障");
-            cardNameList.Add("基础魔法屏障");
+            // cardNameList.Add("基础魔法屏障");
+            //cardNameList.Add("基础魔法屏障");
+            //cardNameList.Add("基础魔法屏障");
+
 
             cardNameList.Add("发现宝箱");
             cardNameList.Add("发现宝箱");
+            cardNameList.Add("发现宝箱");
+            cardNameList.Add("发现宝箱");
+
+            cardNameList.Add("战争怒吼");
             cardNameList.Add("旋风斩");
             cardNameList.Add("我身为盾");
+            cardNameList.Add("临阵磨剑");
+            cardNameList.Add("二连斩");
+            cardNameList.Add("护盾猛击");
+            cardNameList.Add("荣耀重击");
+            cardNameList.Add("誓约胜利之剑!");
+            cardNameList.Add("骑士斩");
 
         }
         if (characterID.Value == 1)
@@ -633,16 +643,37 @@ public class Player : Character
         }
     }
 
+    public override void AttackEX_OnChange(int prev, int next, bool asServer)
+    {
+        if (player_B)
+        {
+            player_B.attackText.text = Attack().ToString();
+        }
+    }
+    public override void AttackPercent_OnChange(float prev, float next, bool asServer)
+    {
+        if (player_B)
+        {
+            player_B.attackText.text = Attack().ToString();
+        }
+    }
+    public override void Glory_OnChange(int prev, int next, bool asServer)
+    {
+        if (asServer)
+        {
+            attackPercent.Value += (next - prev) * 0.01f;
+            gloryBlockEX.Value = next / 5;
+        }
+    }
     #endregion
-    [ContextMenu("测试输出所有Spwan对象")]
+    [ContextMenu("测试增加荣耀值")]
     public void DebugLogs()
     {
-        foreach (var nob in NetworkManager.ServerManager.Objects.Spawned.Values)
-        {
-
-        }
-        Debug.Log("Spawned总数: " + NetworkManager.ServerManager.Objects.Spawned.Count);
-        foreach (var nob in NetworkManager.ServerManager.Objects.Spawned.Values)
-            Debug.Log("Spawned: " + nob?.name);
+        glory.Value += 50;
+    }
+    [ContextMenu("测试清除荣耀值")]
+    public void DebugLogs2()
+    {
+        glory.Value = 0;
     }
 }
