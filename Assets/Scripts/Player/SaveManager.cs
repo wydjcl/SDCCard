@@ -19,6 +19,7 @@ public class SaveManager : SingletonMono<SaveManager>
         Debug.Log("保存成功");
         SaveData.Instance.data.tip = tip;
         SaveData.Instance.data.version = version;
+        SaveData.Instance.ConvertData();
         Save(SaveData.Instance.data, 0);
     }
     [ContextMenu("读取数据")]
@@ -86,15 +87,24 @@ public class SaveManager : SingletonMono<SaveManager>
             Props kabao = new()
             {
                 propName = "卡包",
-                amount = 3
+                amount = 3,
+                index = 0,
             };
             Props yaoshui = new()
             {
                 propName = "小型治疗药水",
-                amount = 3
+                amount = 3,
+                index = 1,
+            };
+            Props yaoshui2 = new()
+            {
+                propName = "小型治疗药水",
+                amount = 3,
+                index = 2,
             };
             newData.warehouse.Add(kabao);
             newData.warehouse.Add(yaoshui);
+            newData.warehouse.Add(yaoshui2);
             //Debug.Log(newData.playerName);
             Save(newData, slot); // 可选：立即写入文件
         }
@@ -122,4 +132,5 @@ public class Props
 {
     public string propName;
     public int amount;
+    public int index;
 }

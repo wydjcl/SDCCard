@@ -73,6 +73,23 @@ public class Chest : NetworkBehaviour, IPointerClickHandler
             gameObject.SetActive(false);
             return;
         }
+        bool haveProp = false;
+        foreach (Props p in ps)
+        {
+            if (string.IsNullOrEmpty(p.propName))
+            {
+
+            }
+            else
+            {
+                haveProp = true;
+            }
+        }
+        if (!haveProp)
+        {
+            gameObject.SetActive(false);
+            return;
+        }
         if (player == GameManager.Instance.player)
         {
             //Debug.Log("本地不需要在同步");
@@ -144,16 +161,16 @@ public class Chest : NetworkBehaviour, IPointerClickHandler
         player.isSkip.Value = false;
     }
     [ServerRpc(RequireOwnership = false)]
-    public void TakeProp(Player player, string propName, int amount, int lastBagAmount)
+    public void TakeProp(Player player, string propName, int amount)
     {
-        if (lastBagAmount == 0)
-        {
-            return;
-        }
-        if (lastBagAmount < amount)
-        {
-            amount = lastBagAmount;
-        }
+        //if (lastBagAmount == 0)
+        //{
+        //    return;
+        //}
+        //if (lastBagAmount < amount)
+        //{
+        //    amount = lastBagAmount;
+        //}
         for (int i = 0; i < propsList.Count; i++)
         {
             if (propsList[i].propName == propName)
@@ -167,14 +184,15 @@ public class Chest : NetworkBehaviour, IPointerClickHandler
             }
         }
         ClientTakePropRpc(player.Owner, propName, amount);
+        ClientSyncChestListRpc(player, propsList);
     }
 
     [TargetRpc]
     public void ClientTakePropRpc(NetworkConnection conn, string propName, int amount)
     {
         //TODO显示获得物品
-        SaveData.Instance.data.bag.Add(new Props { propName = propName, amount = amount });
-        SaveData.Instance.Sort(SaveData.Instance.data.bag);
+        //SaveData.Instance.data.bag.Add(new Props { propName = propName, amount = amount });
+        //SaveData.Instance.Sort(SaveData.Instance.data.bag);
         //BattleScenePlayerUI.Instance.Init();
     }
 

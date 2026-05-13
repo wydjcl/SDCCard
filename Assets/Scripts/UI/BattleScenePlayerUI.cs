@@ -53,7 +53,7 @@ public class BattleScenePlayerUI : UITemplate<BattleScenePlayerUI>
 
             var propUI = Instantiate(Dic.Instance.propPrefab, bagBoxes[i].transform).GetComponent<PropUI>();
             propUI.box = bagBoxes[i];
-            bagBoxes[i].propUI = propUI.gameObject;
+            //  bagBoxes[i].propUI = propUI.gameObject;
 
             propUI.transform.position = propUI.box.transform.position;
             propUI.propImage.sprite = Dic.Instance.GetPropData(data.bag[i].propName).propSprite;
@@ -76,7 +76,7 @@ public class BattleScenePlayerUI : UITemplate<BattleScenePlayerUI>
 
             var propUI = Instantiate(Dic.Instance.propPrefab, chestBoxes[i].transform).GetComponent<PropUI>();
             propUI.box = chestBoxes[i];
-            chestBoxes[i].propUI = propUI.gameObject;
+            //  chestBoxes[i].propUI = propUI.gameObject;
 
             propUI.transform.position = propUI.box.transform.position;
             propUI.propImage.sprite = Dic.Instance.GetPropData(props[i].propName).propSprite;
@@ -86,7 +86,7 @@ public class BattleScenePlayerUI : UITemplate<BattleScenePlayerUI>
             p.amount = props[i].amount;
             propUI.props = p;
 
-            propUI.isChest = true;
+            // propUI.isChest = true;
         }
     }
 

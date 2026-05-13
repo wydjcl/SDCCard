@@ -5,8 +5,21 @@ using UnityEngine.EventSystems;
 
 public class PropBox : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
-    public GameObject propUI;
+    // public GameObject propUI;
+    [HideInInspector]
+    public BagUI bagUI;
+    public PropUI propUI;
     public bool isEnter;
+    public int index;
+    public PropBoxType propBoxType;
+    public List<Props> currentPropsList;
+    public Props props;//格子维护的props
+
+    public bool isWarehouse;//在战备的仓库
+    public bool isBag;//在战备的背包
+    public bool isChest;//在战斗的宝箱
+    public bool isShop;//在商店
+    public bool isVault;//在保险箱
     private void Update()
     {
         //if (isEnter)
@@ -50,17 +63,30 @@ public class PropBox : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
         {
             return;
         }
-        if (eventData.button == PointerEventData.InputButton.Left)
-        {
-            Debug.Log("左键点击");
-            propUI.GetComponent<PropUI>().GetAll();
-        }
+    }
 
-        if (eventData.button == PointerEventData.InputButton.Right)
+    public void RefreshUI()
+    {
+        if (propUI != null)
         {
-            Debug.Log("右键点击");
-            propUI.GetComponent<PropUI>().GetOne();
+            Destroy(propUI.gameObject);
         }
+        propUI = null;
+
+        if (string.IsNullOrEmpty(props.propName))
+        {
+            return;
+        }
+        var pr = Instantiate(Dic.Instance.propPrefab, transform).GetComponent<PropUI>();
+        propUI = pr;
+        propUI.transform.SetParent(bagUI.UIContainer.transform);
+        propUI.box = this;
+        propUI.transform.position = propUI.box.transform.position;
+        propUI.propImage.sprite = Dic.Instance.GetPropData(props.propName).propSprite;
+
+        propUI.amountText.text = props.amount.ToString();
+        propUI.props = props;
+
     }
 }
 

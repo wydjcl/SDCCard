@@ -104,3 +104,10 @@ public enum CardRate
     gold,
     red,
 }
+
+public enum PropBoxType
+{
+    bag,
+    warehouse,
+    chest,
+}

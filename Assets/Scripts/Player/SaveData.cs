@@ -295,6 +295,43 @@ public class SaveData : SingletonMono<SaveData>
         data.bag = Sort(data.bag);
         //SaveManager.Instance.SaveTest();
     }
+
+    public void SwapProps(List<Props> aList, int aIndex, List<Props> bList, int bIndex)
+    {
+        // 安全检查
+        if (aIndex < 0 || aIndex >= aList.Count) return;
+        if (bIndex < 0 || bIndex >= bList.Count) return;
+
+        // 临时变量交换
+        Props temp = aList[aIndex];
+        aList[aIndex] = bList[bIndex];
+        bList[bIndex] = temp;
+    }
+
+
+    public void ConvertData()
+    {
+        data.bag.Clear();
+        data.warehouse.Clear();
+        foreach (PropBox box in BagUI.Instance.bagBoxes)
+        {
+            Props newProps = new Props();
+            newProps.propName = box.props.propName;
+            newProps.amount = box.props.amount;
+            newProps.index = box.index;
+            data.bag.Add(newProps);
+        }
+        foreach (PropBox box in BagUI.Instance.wareHouseBoxes)
+        {
+            Props newProps = new Props();
+            newProps.propName = box.props.propName;
+            newProps.amount = box.props.amount;
+            newProps.index = box.index;
+            data.warehouse.Add(newProps);
+        }
+    }
+
+
     [ContextMenu("测试整理仓库")]
     public void Test()
     {

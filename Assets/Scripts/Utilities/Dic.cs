@@ -57,7 +57,7 @@ public class Dic : SingletonMono<Dic>
                 return p;
             }
         }
-        Debug.LogWarning("没找到对应道具!!!");
+        Debug.LogWarning("没找到对应道具!!!" + "{" + propName + "}");
         return null;
     }
     public PropType GetPropType(string propName)
