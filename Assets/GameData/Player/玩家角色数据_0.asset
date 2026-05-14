@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerSprite: {fileID: 21300000, guid: 40c8fbb61a6a293419f744fa8392df25, type: 3}
   maxHp: 77
-  attack: 15
+  attack: 150
   defense: 0.1
   speed: 55
   cost: 3

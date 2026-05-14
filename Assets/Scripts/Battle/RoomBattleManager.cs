@@ -15,7 +15,6 @@ public class RoomBattleManager : NetworkBehaviour
     public override void OnStartServer()
     {
         base.OnStartServer();
-
     }
     public override void OnStartClient()
     {
@@ -78,6 +77,7 @@ public class RoomBattleManager : NetworkBehaviour
         foreach (var character in room.characters)
         {
             character.isAction.Value = false;
+            character.progress = 0;
             character.InitState();
             character.RemoveAllBuff();
         }

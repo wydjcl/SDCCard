@@ -11,9 +11,18 @@ public class Hunter : Enemy
     {
         if (targetP != null)
         {
-            ServerDTextRpc("狙击");
-            targetP.TakeDamage(this, Attack());
-            targetP = null;
+            if (targetP.isDead.Value)
+            {
+                ServerDTextRpc("空枪");
+                targetP = null;
+            }
+            else
+            {
+                ServerDTextRpc("狙击");
+                targetP.TakeDamage(this, Attack());
+                targetP = null;
+            }
+
         }
         else
         {

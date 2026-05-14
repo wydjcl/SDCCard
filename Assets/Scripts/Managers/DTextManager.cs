@@ -15,9 +15,16 @@ public class DTextManager : SingletonMono<DTextManager>
         var dt = Instantiate(textPrefab).GetComponent<DynamicText>();
         dt.tmp.text = s;
     }
+    public void CreateText(Vector3 pos, string s)
+    {
+        var dt = Instantiate(textPrefab, transform).GetComponent<DynamicText>();
+        dt.gameObject.transform.position = pos;
+        dt.tmp.text = s;
+    }
     public void CreateText(Transform t, string s)
     {
-        var dt = Instantiate(textPrefab, t).GetComponent<DynamicText>();
+        var dt = Instantiate(textPrefab, transform).GetComponent<DynamicText>();
+        dt.gameObject.transform.position = t.transform.position;
         dt.tmp.text = s;
     }
     /// <summary>
@@ -33,7 +40,8 @@ public class DTextManager : SingletonMono<DTextManager>
     }
     public void CreateHurtText(Vector3 pos, int i)
     {
-        var dt = Instantiate(textPrefab, pos, Quaternion.identity).GetComponent<DynamicText>();
+        var dt = Instantiate(textPrefab, transform).GetComponent<DynamicText>();
+        dt.gameObject.transform.position = pos;
         //dt.tmp.text = i.ToString();
         dt.ChangeToHurtText(i);
     }

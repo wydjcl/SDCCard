@@ -222,7 +222,6 @@ public class Player : Character
     [ObserversRpc]
     public void ClientDisableMainUI()
     {
-        Debug.Log("客户端关闭UI");
         MainSceneManager.instance.mainUI.gameObject.SetActive(false);
         SaveManager.Instance.SaveTest();
     }
