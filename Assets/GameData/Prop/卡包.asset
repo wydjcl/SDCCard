@@ -17,4 +17,5 @@ MonoBehaviour:
   propType: 2
   propRate: 0
   maxStack: 3
-  effects: []
+  effects:
+  - {fileID: 11400000, guid: b4730d358c418fb46ad55854521c9867, type: 2}

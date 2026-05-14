@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Boar : Enemy
+public class NormalEnemy : Enemy
 {
     public bool isAOE = false;
     public override void OnStartServer()
@@ -30,7 +30,7 @@ public class Boar : Enemy
         {
             currentRoom.Value.roomBattleManager.GetRandomPlayer().TakeDamage(this, Attack());
         }
-        DTextManager.Instance.CreateText(this.aniUI.transform, "撞击");
+
         TurnEnd();
     }
 }

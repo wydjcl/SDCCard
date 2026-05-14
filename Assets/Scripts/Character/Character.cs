@@ -32,6 +32,7 @@ public class Character : NetworkBehaviour
     public readonly SyncVar<int> block = new SyncVar<int>();//格挡值,回合开始时候清零
     public readonly SyncVar<int> blockEX = new SyncVar<int>();//格挡值增量,每次增加格挡值时多增长的量
     [Header("特殊词条")]
+    public readonly SyncVar<int> dodge = new SyncVar<int>();
     public readonly SyncVar<int> glory = new SyncVar<int>();//荣耀,暂定每层1%攻击和防御力,上限20层,TODO技能树增加每层数值和上限
     public readonly SyncVar<int> gloryBlockEX = new SyncVar<int>();//荣耀的格挡值增量,每五层荣耀+1
     [Header("战斗结算")]
@@ -104,6 +105,19 @@ public class Character : NetworkBehaviour
     public virtual void TakeDamage(Character caster, int damage, int count = 1)
     {
         //先减去防御力数值,如果比防御力低就变成1点伤害
+        if (dodge.Value > 0)
+        {
+            dodge.Value -= 1;
+            if (this is Enemy)
+            {
+                DTextManager.Instance.CreateText(transform, "闪避");
+            }
+            if (count > 1)
+            {
+                StartCoroutine(RepeatDamage(caster, damage, count - 1));
+            }
+            return;
+        }
 
         if (damage > block.Value)
         {
@@ -350,7 +364,16 @@ public class Character : NetworkBehaviour
     {
     }
     #endregion
-
+    [ServerRpc(RequireOwnership = false)]
+    /// <summary>
+    /// 重置状态
+    /// </summary>
+    public void InitState()
+    {
+        block.Value = 0;
+        glory.Value = 0;
+        dodge.Value = 0;
+    }
 
     [ContextMenu("测试给BUff")]
     public void Test()

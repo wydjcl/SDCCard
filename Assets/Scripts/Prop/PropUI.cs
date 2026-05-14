@@ -128,7 +128,7 @@ public class PropUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
                 {
                     return;
                 }
-                box.props.amount -= box.bagUI.PutOneInBox(box.bagUI.wareHouseBoxes, this);
+                box.props.amount -= (1 - box.bagUI.PutOneInBox(box.bagUI.wareHouseBoxes, this));
                 if (box.props.amount == 0)//全被放入
                 {
                     box.props.propName = "";
@@ -140,7 +140,7 @@ public class PropUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
                 {
                     return;
                 }
-                box.props.amount -= box.bagUI.PutOneInBox(box.bagUI.bagBoxes, this);
+                box.props.amount -= (1 - box.bagUI.PutOneInBox(box.bagUI.bagBoxes, this));
                 if (box.props.amount == 0)//全被放入
                 {
                     box.props.propName = "";
@@ -152,7 +152,7 @@ public class PropUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
             if (box.propBoxType == PropBoxType.chest)
             {
                 int oramount = box.props.amount;
-                box.props.amount = box.bagUI.PutOneInBox(box.bagUI.bagBoxes, this);
+                box.props.amount -= (1 - box.bagUI.PutOneInBox(box.bagUI.bagBoxes, this));
                 box.bagUI.chest.TakeProp(GameManager.Instance.player, box.props.propName, oramount - box.props.amount);
                 if (box.props.amount == 0)//全被放入
                 {
@@ -168,7 +168,7 @@ public class PropUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         //{
         if (box.propBoxType == PropBoxType.bag)
         {
-            if (BagUI.Instance.isBattle)
+            if (GameManager.Instance.player.currentRoom.Value.isBattle.Value)
             {
                 return;
             }

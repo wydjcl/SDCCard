@@ -35,13 +35,13 @@ public class PropBox : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
         //    }
 
         //}
-        if (isEnter)
-        {
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                propUI.GetComponent<PropUI>().E();
-            }
-        }
+        //if (isEnter)
+        //{
+        //    if (Input.GetKeyDown(KeyCode.E))
+        //    {
+        //        propUI.GetComponent<PropUI>().E();
+        //    }
+        //}
     }
     public void OnPointerEnter(PointerEventData eventData)
     {

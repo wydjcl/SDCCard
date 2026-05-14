@@ -1,3 +1,4 @@
+using DG.Tweening;
 using FishNet.Connection;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
@@ -13,6 +14,7 @@ public class Chest : NetworkBehaviour, IPointerClickHandler
     public List<Props> propsList = new List<Props>();
     public readonly SyncVar<bool> isLocked = new SyncVar<bool>();
     public GameObject Entry;
+    public GameObject chestSprite;
 
     public override void OnStartServer()
     {
@@ -28,8 +30,12 @@ public class Chest : NetworkBehaviour, IPointerClickHandler
         {
             transform.position = new Vector3(transform.position.x, 0, transform.position.z);//如果生成在空中则放置在地面上
         }
+        PlayLoopScale_Sequence(chestSprite.transform);
         return;
     }
+
+
+
     [ObserversRpc]
     public void InitChest(List<Props> ps)
     {
@@ -123,29 +129,7 @@ public class Chest : NetworkBehaviour, IPointerClickHandler
 
     private void Update()
     {
-        //var roomObj = room.Value?.roomObject.Value;
 
-        //if (roomObj == null) return;
-
-        //// 可选：确保 NetworkObject 已经初始化
-        //if (!roomObj.IsSpawned) return;
-
-        //if (!transform.parent)
-        //{
-        //    if (room.Value?.roomObject.Value?.transform != null)
-        //    {
-        //        transform.SetParent(room.Value.roomObject.Value.transform);
-        //    }
-        //    else
-        //    {
-        //        Debug.Log("无room或者room无Object");
-        //    }
-
-        //}
-        //else
-        //{
-        //    Debug.Log("有父节点");
-        //}
     }
     [ServerRpc(RequireOwnership = false)]
     public void ClientOpenRpc(Player player)
@@ -195,7 +179,19 @@ public class Chest : NetworkBehaviour, IPointerClickHandler
         //SaveData.Instance.Sort(SaveData.Instance.data.bag);
         //BattleScenePlayerUI.Instance.Init();
     }
+    public void PlayLoopScale_Sequence(Transform target)
+    {
+        target.localScale = Vector3.one * 0.34f;
 
+        Sequence seq = DOTween.Sequence();
+
+        seq.Append(target.DOScale(0.48f, 0.5f));
+        seq.Append(target.DOScale(0.34f, 0.5f));
+
+        seq.SetEase(Ease.InOutSine);
+        seq.SetLoops(-1);
+        seq.SetLink(target.gameObject);
+    }
     [ContextMenu("输出房间")]
     public void Test()
     {

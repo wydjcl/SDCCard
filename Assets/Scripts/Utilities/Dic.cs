@@ -72,4 +72,17 @@ public class Dic : SingletonMono<Dic>
         Debug.LogWarning("没找到对应道具!!!");
         return PropType.Normal;
     }
+
+    public List<CardDataSO> TakeCharacterCardList()
+    {
+        List<CardDataSO> datas = new List<CardDataSO>();
+        foreach (var d in cards0)
+        {
+            if (d.characterID == GameManager.Instance.player.characterID.Value)
+            {
+                datas.Add(d);
+            }
+        }
+        return datas;
+    }
 }

@@ -54,11 +54,11 @@ public class BattleSceneManager : MonoBehaviour
         {
             return;
         }
-        if (Input.GetKeyDown(KeyCode.M))
+        if (Input.GetKeyDown(KeyCode.M) || Input.GetKeyDown(KeyCode.Tab))
         {
             ChangeMapState();
         }
-        if (Input.GetKeyDown(KeyCode.B) || Input.GetKeyDown(KeyCode.Tab))
+        if (Input.GetKeyDown(KeyCode.B))
         {
             //ChangePlayerUIState();
             if (BagUI.Instance.root.gameObject.activeSelf)

@@ -9,6 +9,7 @@ public class CardDataSO : ScriptableObject
     public int cardCoin;
     public CardType cardType;
     public CardRate cardRate;
+    public int characterID;
     [TextArea]
     public string cardDes;
 

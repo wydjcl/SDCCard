@@ -185,14 +185,7 @@ public class Player : Character
             cardNameList.Add("发现宝箱");
         }
     }
-    [ServerRpc(RequireOwnership = false)]
-    /// <summary>
-    /// 玩家重置状态
-    /// </summary>
-    public void InitState()
-    {
-        GameManager.Instance.player.block.Value = 0;//TODO战后清除buff
-    }
+
     /// <summary>
     /// 关闭初始场景UI
     /// </summary>
@@ -286,7 +279,7 @@ public class Player : Character
             SaveData.Instance.data.bag.Clear();
         }
         InitData(characterID.Value);
-
+        InitDeck();
         SaveManager.Instance.SaveTest();
     }
 
@@ -296,7 +289,12 @@ public class Player : Character
 
 
     #region 卡牌
-
+    [ServerRpc(RequireOwnership = false)]
+    public void AddCard(string cardName)
+    {
+        cardNameList.Add(cardName);
+        Debug.Log($"{cardName}已经添加到玩家{this.playerName.Value}");
+    }
     public void CreateCard()
     {
         var cardZone = GameObject.FindGameObjectWithTag("CardZone");
@@ -666,6 +664,10 @@ public class Player : Character
         }
     }
     #endregion
+    [ContextMenu("测试输出isbattle")]
+    public void DebugLogsb()
+    {
+    }
     [ContextMenu("测试增加荣耀值")]
     public void DebugLogs()
     {

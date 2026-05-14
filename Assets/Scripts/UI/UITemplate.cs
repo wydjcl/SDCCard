@@ -19,6 +19,5 @@ public class UITemplate<T> : MonoBehaviour where T : MonoBehaviour
     public virtual void CloseUI()
     {
         gameObject.SetActive(false);
-        PropDigManager.Instance.DestroyDig();
     }
 }

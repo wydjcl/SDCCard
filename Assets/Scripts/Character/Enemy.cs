@@ -24,11 +24,6 @@ public class Enemy : Character
     public TextMeshPro AttackText;
 
 
-    [Header("设定数值")]
-    public int set_HP;
-    public int set_speed;
-    public int set_attack;
-
     //血条效果
     [HideInInspector]
     public float targetFill;

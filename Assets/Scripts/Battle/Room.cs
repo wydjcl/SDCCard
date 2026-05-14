@@ -237,13 +237,17 @@ public class Room : NetworkBehaviour, IPointerClickHandler
         {
             if (roomType.Value != RoomType.Boss && roomType.Value != RoomType.Start && roomType.Value != RoomType.Exit)
             {
+                if (isBattled.Value)
+                {
+                    return;
+                }
                 int i = mapManager.rng.Next(0, 100);
                 if (i < 20)//遇敌几率
                 {
                     int r = Random.Range(1, 6);
                     for (int h = 0; h < r; h++)
                     {
-                        int value = Random.Range(0, 2);
+                        int value = Random.Range(0, 4);
                         var e = Instantiate(Dic.Instance.enemies[value]);
                         e.transform.position = new Vector3(0, 30, 0);//在屏幕外生成,等战斗开始再移到房间里
                         var ee = e.GetComponent<Enemy>();

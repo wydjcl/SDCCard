@@ -65,6 +65,10 @@ public class RoomBattleManager : NetworkBehaviour
     {
         Debug.Log("开始战斗");
     }
+    public void ClientStartBattle()
+    {
+
+    }
     /// <summary>
     /// 战斗结束后角色类的处理
     /// </summary>
@@ -74,8 +78,7 @@ public class RoomBattleManager : NetworkBehaviour
         foreach (var character in room.characters)
         {
             character.isAction.Value = false;
-            character.block.Value = 0;
-            character.glory.Value = 0;
+            character.InitState();
             character.RemoveAllBuff();
         }
     }

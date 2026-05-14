@@ -246,11 +246,11 @@ public class BagUI : UITemplate<BagUI>
             box.RefreshUI();
             if (amount == 0)
             {
-                return 1 - amount;
+                return amount;
             }
         }
 
-        return 1 - amount;
+        return amount;
     }
 
     public void DiscardContainer()

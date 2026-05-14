@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: "\u53D1\u73B0\u5B9D\u7BB1"
   m_EditorClassIdentifier: 
   cardName: "\u53D1\u73B0\u5B9D\u7BB1"
+  cardImage: {fileID: 21300000, guid: 5e0a038c462c5c84da57a62cc1e8a461, type: 3}
   cardCost: 1
   cardCoin: 0
   cardType: 2
-  cardImage: {fileID: 21300000, guid: 5e0a038c462c5c84da57a62cc1e8a461, type: 3}
+  cardRate: 0
+  characterID: -1
   cardDes: "\u62BD2\u5F20\u724C"
   effects:
   - {fileID: 11400000, guid: ce5dd04f077986b40be8369ba77e07e6, type: 2}
