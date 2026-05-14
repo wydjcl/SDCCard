@@ -274,7 +274,8 @@ public class Room : NetworkBehaviour, IPointerClickHandler
                     {
 
                         int index = mapManager.rng.Next(0, mapManager.mapData.normalList.Count);
-                        var item = mapManager.mapData.normalList[index];
+                        //  var item = mapManager.mapData.normalList[index];
+                        var item = Dic.Instance;
                         foreach (var obj in item.enemies)
                         {
                             var e = Instantiate(obj);
@@ -306,6 +307,7 @@ public class Room : NetworkBehaviour, IPointerClickHandler
                 else
                 {
                     var item = mapManager.mapData.BossList[0];
+                    //var item = Dic.Instance;
                     foreach (var obj in item.enemies)
                     {
                         var e = Instantiate(obj);

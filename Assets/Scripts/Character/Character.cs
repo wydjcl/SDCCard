@@ -82,6 +82,7 @@ public class Character : NetworkBehaviour
     public virtual void ServerTurnStart()
     {
         block.Value = 0;//回合开始格挡值清零
+                        // Debug.Log("nobody false");
         currentRoom.Value.roomBattleManager.noBodyAction = false;
         isAction.Value = true;
 
@@ -91,8 +92,9 @@ public class Character : NetworkBehaviour
     {
         if (!isAction.Value)
         {
-            return;
+            //return;
         }
+        //Debug.Log("nobody true");
         currentRoom.Value.roomBattleManager.noBodyAction = true;
         isAction.Value = false;
         BuffTurnEnd();

@@ -42,6 +42,7 @@ public class Player : Character
     public Player_B player_B;
 
     private GameObject mainUI;
+    public Room _currentRoom;
 
     #region 生命周期
     private void Awake()
@@ -84,7 +85,7 @@ public class Player : Character
         characterID.OnChange += CharacterID_OnChange;
         playerPos.OnChange += PlayerPos_OnChange;
         cost.OnChange += Cost_OnChange;
-
+        currentRoom.OnChange += CurrentRoom_OnChange;
         InitDeck();//暂用,给卡组名
         cardLayout = FindAnyObjectByType<CardLayout>();
     }
@@ -98,6 +99,7 @@ public class Player : Character
         characterID.OnChange -= CharacterID_OnChange;
         playerPos.OnChange -= PlayerPos_OnChange;
         cost.OnChange -= Cost_OnChange;
+        currentRoom.OnChange -= CurrentRoom_OnChange;
         if (healthBar != null)
         {
             Destroy(healthBar.gameObject);
@@ -136,6 +138,8 @@ public class Player : Character
         cost.Value = data.cost;
         maxCost.Value = data.cost;
 
+        currentRoom.Value = null;
+        playerPos.Value = new Vector2Int(0, 0);
     }
     [ServerRpc(RequireOwnership = false)]
     public void InitDeck()
@@ -200,7 +204,16 @@ public class Player : Character
     [ObserversRpc]
     public void ClientOpenMainUI()
     {
-        MainSceneManager.instance.mainUI.gameObject.SetActive(true);
+
+        if (MainSceneManager.instance == null)
+        {
+
+        }
+        else
+        {
+            MainSceneManager.instance.mainUI.gameObject.SetActive(true);
+        }
+
         foreach (var b in healthBar.ui.bars)
         {
             b.gameObject.SetActive(true);
@@ -209,6 +222,7 @@ public class Player : Character
     [ObserversRpc]
     public void ClientDisableMainUI()
     {
+        Debug.Log("客户端关闭UI");
         MainSceneManager.instance.mainUI.gameObject.SetActive(false);
         SaveManager.Instance.SaveTest();
     }
@@ -252,7 +266,8 @@ public class Player : Character
         if (i == InstanceFinder.ServerManager.Clients.Count)
         {
             Debug.Log("全部玩家逃离或者死亡");
-            UnloadBattleScene();
+            Invoke("UnloadBattleScene", 1f);
+            // UnloadBattleScene();
         }
     }
     [Server]
@@ -283,8 +298,8 @@ public class Player : Character
                 box.props.amount = 0;
             }
         }
-        InitData(characterID.Value);
-        InitDeck();
+        GameManager.Instance.player.InitData(characterID.Value);
+        GameManager.Instance.player.InitDeck();
         SaveManager.Instance.SaveTest();
     }
 
@@ -557,12 +572,19 @@ public class Player : Character
 
     public override void ClientTakeDamageAni()
     {
+        // 关键：先判空！防止物体已被销毁还执行动画
+        if (player_B == null || player_B.playerSprite == null)
+            return;
+
         DG.Tweening.Sequence seq = DOTween.Sequence();
+
         seq.Append(player_B.playerSprite.DOFade(0.4f, 0.08f));
         seq.Append(player_B.playerSprite.DOFade(1f, 0.08f));
         seq.Append(player_B.playerSprite.DOFade(0.4f, 0.08f));
         seq.Append(player_B.playerSprite.DOFade(1f, 0.1f));
-        seq.SetLink(player_B.playerSprite.gameObject);
+
+        // 安全写法：物体销毁时自动杀死动画
+        seq.SetLink(player_B.playerSprite.gameObject, LinkBehaviour.KillOnDestroy);
     }
 
 
@@ -684,10 +706,17 @@ public class Player : Character
             }
         }
     }
+
+    private void CurrentRoom_OnChange(Room prev, Room next, bool asServer)
+    {
+        _currentRoom = next;
+    }
     #endregion
-    [ContextMenu("测试输出isbattle")]
+    [ContextMenu("战斗后")]
     public void DebugLogsb()
     {
+        ClientOpenMainUI();
+        ClientUnloadBattleScene();
     }
     [ContextMenu("测试增加荣耀值")]
     public void DebugLogs()

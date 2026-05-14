@@ -161,10 +161,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 98fe7f6f39030404fa05479b6358a608, type: 2}
   - {fileID: 11400000, guid: d36ff70a447561340bfdaceb9b984799, type: 2}
   enemies:
-  - {fileID: 1772923336532111146, guid: 101a3c9347a01b546a62adb96c493443, type: 3}
-  - {fileID: 1772923336532111146, guid: 2389c9edaada9c9448e51fa9e50f98e3, type: 3}
   - {fileID: 1772923336532111146, guid: 61e9efc649e106c43a1c7dd56820244e, type: 3}
-  - {fileID: 1772923336532111146, guid: 4f8100cd9b1715041ba6e610514420fc, type: 3}
+  - {fileID: 1772923336532111146, guid: 61e9efc649e106c43a1c7dd56820244e, type: 3}
+  - {fileID: 1772923336532111146, guid: 61e9efc649e106c43a1c7dd56820244e, type: 3}
+  - {fileID: 1772923336532111146, guid: 61e9efc649e106c43a1c7dd56820244e, type: 3}
   cards0:
   - {fileID: 11400000, guid: cffe0e01314b56247a5f983ed4319b04, type: 2}
   - {fileID: 11400000, guid: 58dc21de1dd18544a8e30bc9ed225d43, type: 2}
