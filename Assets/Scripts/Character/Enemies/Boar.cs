@@ -28,7 +28,11 @@ public class Boar : Enemy
         //Debug.Log("服务端执行攻击逻辑");
         else
         {
-            currentRoom.Value.roomBattleManager.GetRandomPlayer().TakeDamage(this, Attack());
+            var target = currentRoom.Value.roomBattleManager.GetRandomPlayer();
+            if (target != null)
+            {
+                target.TakeDamage(this, Attack());
+            }
         }
         ServerDTextRpc("撞击");
         TurnEnd();

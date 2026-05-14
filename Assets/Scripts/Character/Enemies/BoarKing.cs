@@ -11,7 +11,12 @@ public class BoarKing : Enemy
         int value = Random.Range(0, 3);
         if (value == 0)
         {
-            Skill0(currentRoom.Value.roomBattleManager.GetRandomPlayer());
+            var t = currentRoom.Value.roomBattleManager.GetRandomPlayer();
+            if (t != null)
+            {
+                Skill0(t);
+            }
+
         }
         else if (value == 1)
         {

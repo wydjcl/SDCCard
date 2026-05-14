@@ -4351,6 +4351,7 @@ MonoBehaviour:
   _componentIndexCache: 255
   _addedNetworkObject: {fileID: 185669039}
   _networkObjectCache: {fileID: 0}
+  mainUI: {fileID: 2114411646}
   battleRPCImage: {fileID: 126537239}
   battleRPCText: {fileID: 1110339570}
   voteCount: 0

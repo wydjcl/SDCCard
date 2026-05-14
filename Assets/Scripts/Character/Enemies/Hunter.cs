@@ -13,6 +13,7 @@ public class Hunter : Enemy
         {
             ServerDTextRpc("狙击");
             targetP.TakeDamage(this, Attack());
+            targetP = null;
         }
         else
         {

@@ -15,15 +15,19 @@ public class Wolf : Enemy
     public override void ServerMove()
     {
         Player target = currentRoom.Value.roomBattleManager.GetRandomPlayer();
-        if (target.HP.Value >= target.maxHP.Value / 2)
+        if ((target != null))
         {
-            target.TakeDamage(this, Attack());
+            if (target.HP.Value >= target.maxHP.Value / 2)
+            {
+                target.TakeDamage(this, Attack());
+            }
+            else
+            {
+                target.TakeDamage(this, Mathf.CeilToInt(Attack() * 1.5f));
+            }
+            ServerDTextRpc("撕咬");
         }
-        else
-        {
-            target.TakeDamage(this, Mathf.CeilToInt(Attack() * 1.5f));
-        }
-        ServerDTextRpc("撕咬");
+
         TurnEnd();
     }
 

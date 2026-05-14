@@ -200,8 +200,7 @@ public class Player : Character
     [ObserversRpc]
     public void ClientOpenMainUI()
     {
-        // mainUI = GameObject.FindGameObjectWithTag("MainUI");
-        mainUI.gameObject.SetActive(true);
+        MainSceneManager.instance.mainUI.gameObject.SetActive(true);
         foreach (var b in healthBar.ui.bars)
         {
             b.gameObject.SetActive(true);
@@ -210,8 +209,7 @@ public class Player : Character
     [ObserversRpc]
     public void ClientDisableMainUI()
     {
-        mainUI = GameObject.FindGameObjectWithTag("MainUI");
-        mainUI.gameObject.SetActive(false);
+        MainSceneManager.instance.mainUI.gameObject.SetActive(false);
         SaveManager.Instance.SaveTest();
     }
     /// <summary>
@@ -680,7 +678,10 @@ public class Player : Character
     {
         if (BattleSceneManager.Instance != null)
         {
-            BattleSceneManager.Instance.costText.text = "费用" + next;
+            if (this == GameManager.Instance.player)
+            {
+                BattleSceneManager.Instance.costText.text = "费用" + next;
+            }
         }
     }
     #endregion

@@ -8,7 +8,7 @@ public class SaveManager : SingletonMono<SaveManager>
     //      Application.persistentDataPath + "/playerData.json";
 
     private string tip = "这里是玩家数据存档,你可以自由的修改数据,但请不要对版本号等进行修改";
-    private string version = "0.01";
+    private string version = "0.02";
     private string playerName = "若叶睦";
     private int bagCount = 30;
     private int warehouseCount = 100;

@@ -8,12 +8,18 @@ using UnityEngine;
 
 public class MainSceneManager : NetworkBehaviour
 {
+    public static MainSceneManager instance;
+    public GameObject mainUI;
     // Start is called before the first frame update
     public GameObject battleRPCImage;
     public TextMeshProUGUI battleRPCText;
     public int voteCount;//InstanceFinder.ServerManager.Clients.Count;
 
     public GameObject preparationUI;
+    private void Awake()
+    {
+        instance = this;
+    }
     public override void OnStartClient()
     {
         base.OnStartClient();

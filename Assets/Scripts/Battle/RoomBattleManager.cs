@@ -209,7 +209,7 @@ public class RoomBattleManager : NetworkBehaviour
         GameManager.Instance.player.InitState();
         if (GameManager.Instance.player.isDead.Value)
         {
-            GameManager.Instance.player.HP.Value += 1;
+            GameManager.Instance.player.HP.Value = 1;
             GameManager.Instance.player.isDead.Value = false;
         }
     }
