@@ -17,6 +17,7 @@ public class Player_B : MonoBehaviour
 
     public TextMeshPro attackText;
     public TextMeshPro hpText;
+    public TextMeshPro BlockText;
     public void Init(Player p)
     {
         player = p;

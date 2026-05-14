@@ -15,13 +15,16 @@ public class Enemy : Character
     // public BattleSceneManager battleSceneManager;
     [Header("需要导入")]
     public EnemyData enemyData;
+    public SortingGroup sortingGroup;
     public GameObject Entry;
     public GameObject aniUI;
 
     public SpriteRenderer enemySprite;
-    public SortingGroup sortingGroup;
     public TextMeshPro HPText;
     public TextMeshPro AttackText;
+    public TextMeshPro BlockText;
+
+    public bool isBoss;
 
 
     //血条效果
@@ -128,7 +131,7 @@ public class Enemy : Character
         var c = Instantiate(Dic.Instance.chestPrefab, this.transform.position, Quaternion.identity).GetComponent<Chest>();
         c.room.Value = currentRoom.Value;
         Spawn(c, null, this.gameObject.scene);
-        c.InitChest(enemyData.GetDropResult());
+        c.InitChest(enemyData.GetDropResult(), isBoss);
     }
     public override void ClientTakeDamageAni()
     {
@@ -145,6 +148,7 @@ public class Enemy : Character
 
     public override void HP_OnChange(int prev, int next, bool asServer)
     {
+        base.HP_OnChange(prev, next, asServer);
         targetFill = (float)next / (float)maxHP.Value;
         HPText.text = next.ToString();
     }
@@ -155,5 +159,10 @@ public class Enemy : Character
     public override void AttackPercent_OnChange(float prev, float next, bool asServer)
     {
         AttackText.text = Attack().ToString();
+    }
+    public override void Block_OnChange(int prev, int next, bool asServer)
+    {
+        base.Block_OnChange(prev, next, asServer);
+        BlockText.text = next.ToString();
     }
 }

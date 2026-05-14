@@ -23,7 +23,7 @@ public class Wolf : Enemy
         {
             target.TakeDamage(this, Mathf.CeilToInt(Attack() * 1.5f));
         }
-        DTextManager.Instance.CreateText(this.aniUI.transform, "撕咬");
+        ServerDTextRpc("撕咬");
         TurnEnd();
     }
 

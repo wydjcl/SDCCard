@@ -27,7 +27,7 @@ public class Player : Character
 
     //战斗数据
     public readonly SyncVar<int> cost = new SyncVar<int>();
-
+    public readonly SyncVar<int> maxCost = new SyncVar<int>();
 
     public readonly SyncList<string> cardNameList = new SyncList<string>();//初始化的卡组
     public List<Card> handDeck = new List<Card>();
@@ -83,7 +83,7 @@ public class Player : Character
         playerName.OnChange += PlayerName_OnChange;
         characterID.OnChange += CharacterID_OnChange;
         playerPos.OnChange += PlayerPos_OnChange;
-
+        cost.OnChange += Cost_OnChange;
 
         InitDeck();//暂用,给卡组名
         cardLayout = FindAnyObjectByType<CardLayout>();
@@ -97,6 +97,7 @@ public class Player : Character
         playerName.OnChange -= PlayerName_OnChange;
         characterID.OnChange -= CharacterID_OnChange;
         playerPos.OnChange -= PlayerPos_OnChange;
+        cost.OnChange -= Cost_OnChange;
         if (healthBar != null)
         {
             Destroy(healthBar.gameObject);
@@ -133,6 +134,7 @@ public class Player : Character
         attack.Value = data.attack;
         speed.Value = data.speed;
         cost.Value = data.cost;
+        maxCost.Value = data.cost;
 
     }
     [ServerRpc(RequireOwnership = false)]
@@ -142,30 +144,31 @@ public class Player : Character
         {
             cardNameList.Clear();
             cardNameList.Add("给你一拳");
-            //cardNameList.Add("给你一拳");
-            //cardNameList.Add("给你一拳");
-            //cardNameList.Add("给你一拳");
-            //cardNameList.Add("给你一拳");
+            cardNameList.Add("给你一拳");
+            cardNameList.Add("给你一拳");
+            cardNameList.Add("给你一拳");
+            cardNameList.Add("给你一拳");
             cardNameList.Add("基础魔法屏障");
-            // cardNameList.Add("基础魔法屏障");
-            //cardNameList.Add("基础魔法屏障");
-            //cardNameList.Add("基础魔法屏障");
+            cardNameList.Add("基础魔法屏障");
+            cardNameList.Add("基础魔法屏障");
+            cardNameList.Add("基础魔法屏障");
 
 
             cardNameList.Add("发现宝箱");
-            cardNameList.Add("发现宝箱");
-            cardNameList.Add("发现宝箱");
-            cardNameList.Add("发现宝箱");
 
-            cardNameList.Add("战争怒吼");
-            cardNameList.Add("旋风斩");
-            cardNameList.Add("我身为盾");
-            cardNameList.Add("临阵磨剑");
-            cardNameList.Add("二连斩");
-            cardNameList.Add("护盾猛击");
-            cardNameList.Add("荣耀重击");
-            cardNameList.Add("誓约胜利之剑!");
-            cardNameList.Add("骑士斩");
+            //cardNameList.Add("发现宝箱");
+            //cardNameList.Add("发现宝箱");
+            //cardNameList.Add("发现宝箱");
+
+            //cardNameList.Add("战争怒吼");
+            //cardNameList.Add("旋风斩");
+            //cardNameList.Add("我身为盾");
+            //cardNameList.Add("临阵磨剑");
+            //cardNameList.Add("二连斩");
+            //cardNameList.Add("护盾猛击");
+            //cardNameList.Add("荣耀重击");
+            //cardNameList.Add("誓约胜利之剑!");
+            //cardNameList.Add("骑士斩");
 
         }
         if (characterID.Value == 1)
@@ -276,7 +279,11 @@ public class Player : Character
         if (isDead.Value)
         {
             Debug.Log("死亡,清空背包");
-            SaveData.Instance.data.bag.Clear();
+            foreach (var box in BagUI.Instance.bagBoxes)
+            {
+                box.props.propName = "";
+                box.props.amount = 0;
+            }
         }
         InitData(characterID.Value);
         InitDeck();
@@ -494,14 +501,15 @@ public class Player : Character
     public override void ServerTurnStart()
     {
         base.ServerTurnStart();
-        ClientTurnStart(Owner);
 
+        ClientTurnStart(Owner);
+        cost.Value = maxCost.Value;
     }
     [TargetRpc]
     public void ClientTurnStart(NetworkConnection conn)
     {
         BattleSceneManager.Instance.turnButtom.SetActive(true);
-        DrawCard(10);
+        DrawCard(5);
     }
 
     public override void ServerTurnEnd()
@@ -623,6 +631,11 @@ public class Player : Character
     public override void Block_OnChange(int prev, int next, bool asServer)
     {
         base.Block_OnChange(prev, next, asServer);
+        if (player_B)
+        {
+            player_B.BlockText.text = next.ToString();
+        }
+
         if (healthBar)
         {
             if (block.Value <= 0)
@@ -661,6 +674,13 @@ public class Player : Character
         {
             attackPercent.Value += (next - prev) * 0.01f;
             gloryBlockEX.Value = next / 5;
+        }
+    }
+    private void Cost_OnChange(int prev, int next, bool asServer)
+    {
+        if (BattleSceneManager.Instance != null)
+        {
+            BattleSceneManager.Instance.costText.text = "费用" + next;
         }
     }
     #endregion

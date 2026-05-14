@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 36afecc43c6fe0d49817538d1cd71d5f, type: 3}
-  m_Name: "\u91CE\u732A\u7360\u7259"
+  m_Name: "\u5927\u91CE\u732A\u7360\u7259"
   m_EditorClassIdentifier: 
-  propName: "\u91CE\u732A\u7360\u7259"
+  propName: "\u5927\u91CE\u732A\u7360\u7259"
   propSprite: {fileID: 21300000, guid: 899ba93c9eda08c49945b83ebf32b324, type: 3}
   propType: 0
-  propRate: 0
+  propRate: 1
   maxStack: 16
   effects: []

@@ -4,6 +4,7 @@ using FishNet.Object;
 using GameKit.Dependencies.Utilities;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 /// <summary>
 /// 管理战斗场景UI
@@ -16,6 +17,7 @@ public class BattleSceneManager : MonoBehaviour
 
     public RectTransform mapRT;
     public GameObject turnButtom;
+    public TextMeshProUGUI costText;
     [Header("需导入UI")]
     public GameObject map;
     public BattleScenePlayerUI playerUI;

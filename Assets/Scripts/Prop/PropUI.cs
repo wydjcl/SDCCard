@@ -101,11 +101,8 @@ public class PropUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         }
         if (box.bagUI.isChest)
         {
-            Debug.Log("现在在宝箱UI");
             if (box.propBoxType == PropBoxType.chest)
             {
-                Debug.Log("点击宝箱UI");
-
                 int oramount = box.props.amount;
                 box.props.amount = box.bagUI.PutInBox(box.bagUI.bagBoxes, this);
                 box.bagUI.chest.TakeProp(GameManager.Instance.player, box.props.propName, oramount - box.props.amount);
@@ -379,9 +376,15 @@ public class PropUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         }
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            Debug.Log("左键点击");
-            // GetAll();
-            ClickLeft();
+            if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+            {
+                Debug.Log("Ctrl + 左键点击");
+            }
+            else
+            {
+                ClickLeft();
+                Debug.Log("左键点击");
+            }
         }
 
         if (eventData.button == PointerEventData.InputButton.Right)

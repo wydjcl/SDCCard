@@ -1,3 +1,4 @@
+using FishNet.Object;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -90,15 +91,15 @@ public class MapDataSO : ScriptableObject
 [Serializable]
 public class SpawnEnemyList
 {
-    public List<Enemy> enemies;
+    public List<NetworkObject> enemies;
 }
 [Serializable]
 public class MapProps
 {
     public PropData propData;
-    public float dropRate;
     public int minDropNum;
     public int maxDropNum;
+    public float dropRate;
 }
 [Serializable]
 public class MapPropsList

@@ -12,13 +12,84 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e8656c97bfc2f8419aa40cb57fee927, type: 3}
   m_Name: "\u5730\u56FE\u914D\u7F6E\u8868_\u68EE\u6797"
   m_EditorClassIdentifier: 
-  normalList: []
+  normalList:
+  - enemies:
+    - {fileID: 1772923336532111146, guid: 101a3c9347a01b546a62adb96c493443, type: 3}
+  - enemies:
+    - {fileID: 1772923336532111146, guid: 101a3c9347a01b546a62adb96c493443, type: 3}
+    - {fileID: 1772923336532111146, guid: 101a3c9347a01b546a62adb96c493443, type: 3}
+  - enemies:
+    - {fileID: 1772923336532111146, guid: 2389c9edaada9c9448e51fa9e50f98e3, type: 3}
+  - enemies:
+    - {fileID: 1772923336532111146, guid: 2389c9edaada9c9448e51fa9e50f98e3, type: 3}
+    - {fileID: 1772923336532111146, guid: 101a3c9347a01b546a62adb96c493443, type: 3}
+    - {fileID: 1772923336532111146, guid: 101a3c9347a01b546a62adb96c493443, type: 3}
+    - {fileID: 1772923336532111146, guid: 101a3c9347a01b546a62adb96c493443, type: 3}
+  - enemies:
+    - {fileID: 1772923336532111146, guid: 101a3c9347a01b546a62adb96c493443, type: 3}
+    - {fileID: 1772923336532111146, guid: 101a3c9347a01b546a62adb96c493443, type: 3}
+    - {fileID: 1772923336532111146, guid: 101a3c9347a01b546a62adb96c493443, type: 3}
+    - {fileID: 1772923336532111146, guid: 101a3c9347a01b546a62adb96c493443, type: 3}
+  - enemies:
+    - {fileID: 1772923336532111146, guid: 4f8100cd9b1715041ba6e610514420fc, type: 3}
+    - {fileID: 1772923336532111146, guid: 4f8100cd9b1715041ba6e610514420fc, type: 3}
+    - {fileID: 1772923336532111146, guid: 4f8100cd9b1715041ba6e610514420fc, type: 3}
+    - {fileID: 1772923336532111146, guid: 4f8100cd9b1715041ba6e610514420fc, type: 3}
+  - enemies:
+    - {fileID: 1772923336532111146, guid: 4f8100cd9b1715041ba6e610514420fc, type: 3}
+    - {fileID: 1772923336532111146, guid: 4f8100cd9b1715041ba6e610514420fc, type: 3}
+    - {fileID: 1772923336532111146, guid: 4f8100cd9b1715041ba6e610514420fc, type: 3}
+  - enemies:
+    - {fileID: 1772923336532111146, guid: 4f8100cd9b1715041ba6e610514420fc, type: 3}
+    - {fileID: 1772923336532111146, guid: 4f8100cd9b1715041ba6e610514420fc, type: 3}
+  - enemies:
+    - {fileID: 1772923336532111146, guid: 61e9efc649e106c43a1c7dd56820244e, type: 3}
+  - enemies:
+    - {fileID: 1772923336532111146, guid: 61e9efc649e106c43a1c7dd56820244e, type: 3}
+    - {fileID: 1772923336532111146, guid: 61e9efc649e106c43a1c7dd56820244e, type: 3}
+  - enemies:
+    - {fileID: 1772923336532111146, guid: 61e9efc649e106c43a1c7dd56820244e, type: 3}
+    - {fileID: 1772923336532111146, guid: 61e9efc649e106c43a1c7dd56820244e, type: 3}
+    - {fileID: 1772923336532111146, guid: 61e9efc649e106c43a1c7dd56820244e, type: 3}
+    - {fileID: 1772923336532111146, guid: 61e9efc649e106c43a1c7dd56820244e, type: 3}
   jingyingList: []
-  BossList: []
+  BossList:
+  - enemies:
+    - {fileID: 1772923336532111146, guid: 0dc54e61b74f45e4494511fd120b0aca, type: 3}
   mapPropsLists:
   - mapPropsList:
-    - propData: {fileID: 0}
-      dropRate: 0
-      minDropNum: 0
-      maxDropNum: 0
-    weight: 0
+    - propData: {fileID: 11400000, guid: 267aee26dd70dbf419f62081271ec9ff, type: 2}
+      minDropNum: 3
+      maxDropNum: 5
+      dropRate: 1
+    - propData: {fileID: 11400000, guid: 0b48a5553c49204418092943832f2cb0, type: 2}
+      minDropNum: 1
+      maxDropNum: 1
+      dropRate: 0.3
+    weight: 1
+  - mapPropsList:
+    - propData: {fileID: 11400000, guid: c691afe1d866d654f93409e970ec56f2, type: 2}
+      minDropNum: 3
+      maxDropNum: 5
+      dropRate: 1
+    - propData: {fileID: 11400000, guid: 0b48a5553c49204418092943832f2cb0, type: 2}
+      minDropNum: 1
+      maxDropNum: 1
+      dropRate: 0.3
+    weight: 1
+  - mapPropsList:
+    - propData: {fileID: 11400000, guid: 3b2416084bcc6fb4e92cfb2947c7bcbb, type: 2}
+      minDropNum: 1
+      maxDropNum: 1
+      dropRate: 1
+    - propData: {fileID: 11400000, guid: 0b48a5553c49204418092943832f2cb0, type: 2}
+      minDropNum: 1
+      maxDropNum: 1
+      dropRate: 0.3
+    weight: 1
+  - mapPropsList:
+    - propData: {fileID: 11400000, guid: 0b48a5553c49204418092943832f2cb0, type: 2}
+      minDropNum: 2
+      maxDropNum: 2
+      dropRate: 1
+    weight: 1

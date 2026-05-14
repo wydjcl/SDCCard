@@ -1,3 +1,4 @@
+using DG.Tweening;
 using FishNet;
 using FishNet.Object;
 using FishNet.Transporting;
@@ -23,6 +24,10 @@ public class GameManager : NetworkBehaviour
     private void Awake()
     {
         Instance = this;
+    }
+    private void Start()
+    {
+        DOTween.SetTweensCapacity(800, 300);
     }
     public void ChangeCameraMode(CameraMode newMode)
     {

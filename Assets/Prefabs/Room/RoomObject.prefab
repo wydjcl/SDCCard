@@ -31,7 +31,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6856875670732325340}
+  - {fileID: 6583485531172203327}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2203423837027611954
@@ -50,7 +50,7 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 1047519154347221249}
   _networkObjectCache: {fileID: 1047519154347221249}
   battleSceneManager: {fileID: 0}
-  Entry: {fileID: 0}
+  Entry: {fileID: 2410826276074694086}
   back: {fileID: 4449228126836530542}
 --- !u!114 &1047519154347221249
 MonoBehaviour:
@@ -107,6 +107,38 @@ MonoBehaviour:
     Rotation: {x: 0, y: 0, z: 0, w: 1}
     Scale: {x: 1, y: 1, z: 1}
     IsValid: 1
+--- !u!1 &2410826276074694086
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6583485531172203327}
+  m_Layer: 0
+  m_Name: Entry
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &6583485531172203327
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2410826276074694086}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6856875670732325340}
+  m_Father: {fileID: 8523938219522474502}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6926623104513738801
 GameObject:
   m_ObjectHideFlags: 0
@@ -137,7 +169,7 @@ Transform:
   m_LocalScale: {x: 2.4099998, y: 2.4099998, z: 2.4099998}
   m_ConstrainProportionsScale: 1
   m_Children: []
-  m_Father: {fileID: 8523938219522474502}
+  m_Father: {fileID: 6583485531172203327}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &4449228126836530542
 SpriteRenderer:

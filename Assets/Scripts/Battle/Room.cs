@@ -8,6 +8,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using static UnityEngine.GraphicsBuffer;
 
 public class Room : NetworkBehaviour, IPointerClickHandler
 {
@@ -121,14 +122,14 @@ public class Room : NetworkBehaviour, IPointerClickHandler
         // 👉 只关心“新增”
         if (op == SyncListOperation.Add && newItem is Enemy)
         {
-            Debug.Log("有敌人加入，重新排序");
+            //Debug.Log("有敌人加入，重新排序");
             ClientChangeEnemyPos();
         }
         if (GameManager.Instance.player.currentRoom.Value == this)
         {
             if (op == SyncListOperation.Add && newItem is Player playerAdd)
             {
-                Debug.Log("玩家加入，显示血条");
+                //Debug.Log("玩家加入，显示血条");
                 playerAdd.healthBar.gameObject.SetActive(true);
                 playerAdd.healthBar.ui.UpdateLayoutHealthBar();
 
@@ -186,6 +187,10 @@ public class Room : NetworkBehaviour, IPointerClickHandler
             Debug.Log("玩家正身处战斗,无法移动");
             return;
         }
+
+        ClientMoveMapContent(player.Owner);
+
+
         bool nearby = false;
         Vector2Int[] dirs =
    {
@@ -217,6 +222,27 @@ public class Room : NetworkBehaviour, IPointerClickHandler
             Debug.Log("未解锁");
         }
     }
+    [TargetRpc]
+    public void ClientMoveMapContent(NetworkConnection conn)
+    {
+        var content = mapManager.content.GetComponent<RectTransform>();
+        var target = GetComponent<RectTransform>();
+        var viewport = mapManager.viewport.GetComponent<RectTransform>();
+        Vector2 targetLocalPos = content.InverseTransformPoint(target.position);
+
+        // 2️⃣ 获取viewport中心点在content坐标
+        Vector2 viewportCenter = content.InverseTransformPoint(viewport.position);
+
+        // 3️⃣ 差值 = 需要移动的距离
+        Vector2 offset = viewportCenter - targetLocalPos;
+
+        // 4️⃣ 目标位置
+        Vector2 newPos = content.anchoredPosition + offset;
+
+        // 5️⃣ 平滑移动（DOTween）
+        content.DOAnchorPos(newPos, 0.4f).SetEase(Ease.OutCubic).SetLink(content.gameObject);
+    }
+
     [ServerRpc(RequireOwnership = false)]
     /// <summary>
     /// 当玩家进入该房间,服务端执行
@@ -239,16 +265,50 @@ public class Room : NetworkBehaviour, IPointerClickHandler
             {
                 if (isBattled.Value)
                 {
-                    return;
+
                 }
-                int i = mapManager.rng.Next(0, 100);
-                if (i < 20)//遇敌几率
+                else
                 {
-                    int r = Random.Range(1, 6);
-                    for (int h = 0; h < r; h++)
+                    int i = mapManager.rng.Next(0, 100);
+                    if (i < 80)//遇敌几率
                     {
-                        int value = Random.Range(0, 4);
-                        var e = Instantiate(Dic.Instance.enemies[value]);
+
+                        int index = mapManager.rng.Next(0, mapManager.mapData.normalList.Count);
+                        var item = mapManager.mapData.normalList[index];
+                        foreach (var obj in item.enemies)
+                        {
+                            var e = Instantiate(obj);
+                            e.transform.position = new Vector3(0, 30, 0);//在屏幕外生成,等战斗开始再移到房间里
+                            var ee = e.GetComponent<Enemy>();
+                            ee.currentRoom.Value = this;
+                            ee.Entry.gameObject.SetActive(false);
+                            characters.Add(ee);
+                            Spawn(e, null, gameObject.scene);
+                        }
+
+
+
+
+                        //ClientPlayerInBattle(conn);
+                        isBattle.Value = true;
+                        isBattled.Value = true;
+                        roomBattleManager.StartBattle();
+                    }
+                }
+
+            }
+            if (roomType.Value == RoomType.Boss)
+            {
+                if (isBattled.Value)
+                {
+
+                }
+                else
+                {
+                    var item = mapManager.mapData.BossList[0];
+                    foreach (var obj in item.enemies)
+                    {
+                        var e = Instantiate(obj);
                         e.transform.position = new Vector3(0, 30, 0);//在屏幕外生成,等战斗开始再移到房间里
                         var ee = e.GetComponent<Enemy>();
                         ee.currentRoom.Value = this;
@@ -258,13 +318,15 @@ public class Room : NetworkBehaviour, IPointerClickHandler
                     }
 
 
+
+
                     //ClientPlayerInBattle(conn);
                     isBattle.Value = true;
                     isBattled.Value = true;
                     roomBattleManager.StartBattle();
+
                 }
             }
-
         }
 
         ClientPlayerIn(conn);
@@ -276,14 +338,14 @@ public class Room : NetworkBehaviour, IPointerClickHandler
     [TargetRpc]
     public void ClientPlayerIn(NetworkConnection conn)
     {
-
-
         foreach (var r in BattleSceneManager.Instance.roomObjects)
         {
             r.gameObject.SetActive(false);
+            r.Entry.SetActive(false);
             // r.transform.position = new Vector3(0, 30, 0);
         }
         roomObject.Value.gameObject.SetActive(true);
+        roomObject.Value.Entry.SetActive(true);
         roomObject.Value.back.sprite = Dic.Instance.forestSprites[Random.Range(0, Dic.Instance.forestSprites.Count)];
         //roomObject.Value.transform.position = new Vector3(0, 0, 0);
         if (roomType.Value == RoomType.Exit)

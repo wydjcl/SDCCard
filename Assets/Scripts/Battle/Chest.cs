@@ -4,6 +4,7 @@ using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using static UnityEngine.EventSystems.EventTrigger;
@@ -13,18 +14,36 @@ public class Chest : NetworkBehaviour, IPointerClickHandler
     public readonly SyncVar<Room> room = new SyncVar<Room>();
     public List<Props> propsList = new List<Props>();
     public readonly SyncVar<bool> isLocked = new SyncVar<bool>();
+    public readonly SyncVar<bool> isBoss = new SyncVar<bool>();
     public GameObject Entry;
     public GameObject chestSprite;
+
+    public bool haveParent = false;
 
     public override void OnStartServer()
     {
         base.OnStartServer();
 
     }
+
+    private void Update()
+    {
+        if (!haveParent)
+        {
+            if (room.Value != null)
+            {
+                if (room.Value.roomObject.Value != null)
+                {
+                    transform.SetParent(room.Value.roomObject.Value.Entry.transform);
+                    haveParent = true;
+                }
+            }
+        }
+
+    }
     public override void OnStartClient()
     {
         base.OnStartClient();
-        transform.SetParent(room.Value.roomObject.Value.transform);
         Entry.gameObject.SetActive(true);
         if (transform.position.y > 10)
         {
@@ -33,13 +52,15 @@ public class Chest : NetworkBehaviour, IPointerClickHandler
         PlayLoopScale_Sequence(chestSprite.transform);
         return;
     }
-
+    public override void OnStopClient()
+    {
+        base.OnStopClient();
+    }
 
 
     [ObserversRpc]
-    public void InitChest(List<Props> ps)
+    public void InitChest(List<Props> ps, bool boss = false)
     {
-
         if (IsServerStarted)
         {
             if (ps.Count == 0)
@@ -48,21 +69,20 @@ public class Chest : NetworkBehaviour, IPointerClickHandler
                 Despawn();
             }
         }
-        //Debug.Log("放入宝藏");
+        if (boss)
+        {
+            isBoss.Value = true;
+        }
         if (ps.Count > 0)
         {
-            // Debug.Log(ps[0].propName);
         }
         Entry.gameObject.SetActive(true);
-        //if (IsServerStarted)
-        //{
-        //    //Debug.Log("服务端不需要再加载");
-        //    return;
-        //}
-        //Debug.Log("客户端加载宝箱");
         propsList.Clear();
         propsList.AddRange(ps);
     }
+
+
+
     [ServerRpc(RequireOwnership = false)]
     public void ClientSyncChestListRpc(Player player, List<Props> ps)
     {
@@ -110,7 +130,7 @@ public class Chest : NetworkBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (isLocked.Value)
+        if (isLocked.Value && !isBoss.Value)
         {
             //Debug.Log("宝箱已锁定");
             return;
@@ -127,10 +147,7 @@ public class Chest : NetworkBehaviour, IPointerClickHandler
         //BagUI.Instance.chest = this;
     }
 
-    private void Update()
-    {
 
-    }
     [ServerRpc(RequireOwnership = false)]
     public void ClientOpenRpc(Player player)
     {
@@ -147,14 +164,34 @@ public class Chest : NetworkBehaviour, IPointerClickHandler
     [ServerRpc(RequireOwnership = false)]
     public void TakeProp(Player player, string propName, int amount)
     {
-        //if (lastBagAmount == 0)
-        //{
-        //    return;
-        //}
-        //if (lastBagAmount < amount)
-        //{
-        //    amount = lastBagAmount;
-        //}
+        if (isBoss.Value)
+        {
+            ClientTakePropInBossChest(player.Owner, propName, amount);
+        }
+        else
+        {
+            for (int i = 0; i < propsList.Count; i++)
+            {
+                if (propsList[i].propName == propName)
+                {
+                    propsList[i].amount -= amount;
+                    if (propsList[i].amount <= 0)
+                    {
+                        propsList.RemoveAt(i);
+                    }
+                    break;
+                }
+            }
+
+            ClientTakePropRpc(player.Owner, propName, amount);
+            ClientSyncChestListRpc(player, propsList);
+        }
+
+
+    }
+    [TargetRpc]
+    public void ClientTakePropInBossChest(NetworkConnection conn, string propName, int amount)
+    {
         for (int i = 0; i < propsList.Count; i++)
         {
             if (propsList[i].propName == propName)
@@ -167,10 +204,12 @@ public class Chest : NetworkBehaviour, IPointerClickHandler
                 break;
             }
         }
-        ClientTakePropRpc(player.Owner, propName, amount);
-        ClientSyncChestListRpc(player, propsList);
+        if (propsList.Count == 0)
+        {
+            gameObject.SetActive(false);
+            return;
+        }
     }
-
     [TargetRpc]
     public void ClientTakePropRpc(NetworkConnection conn, string propName, int amount)
     {
@@ -183,7 +222,7 @@ public class Chest : NetworkBehaviour, IPointerClickHandler
     {
         target.localScale = Vector3.one * 0.34f;
 
-        Sequence seq = DOTween.Sequence();
+        DG.Tweening.Sequence seq = DOTween.Sequence();
 
         seq.Append(target.DOScale(0.48f, 0.5f));
         seq.Append(target.DOScale(0.34f, 0.5f));

@@ -110,11 +110,12 @@ public class Character : NetworkBehaviour
             dodge.Value -= 1;
             if (this is Enemy)
             {
-                DTextManager.Instance.CreateText(transform, "闪避");
+                //DTextManager.Instance.CreateText(transform, "闪避");
+                ServerDTextRpc("闪避");
             }
             if (count > 1)
             {
-                StartCoroutine(RepeatDamage(caster, damage, count - 1));
+                TakeDamage(caster, damage, count - 1);
             }
             return;
         }
@@ -123,14 +124,16 @@ public class Character : NetworkBehaviour
         {
             damage -= block.Value;
             block.Value = 0;
-            if (this is Enemy)
-            {
-                DTextManager.Instance.CreateHurtText(transform, -damage);
-            }
-            else if (this is Player p)
-            {
-                DTextManager.Instance.CreateHurtText(p.player_B.AniUI.transform, -damage);
-            }
+            //if (this is Enemy)
+            //{
+            //    //  DTextManager.Instance.CreateHurtText(transform, -damage);
+            //    ServerDHurtTextRpc(-damage, transform.position);
+            //}
+            //else if (this is Player p)
+            //{
+            //    // DTextManager.Instance.CreateHurtText(p.player_B.AniUI.transform, -damage);
+            //    ServerDHurtTextRpc(-damage, p.player_B.AniUI.transform.position);
+            //}
         }
         else
         {
@@ -158,7 +161,8 @@ public class Character : NetworkBehaviour
         ServerTakeDamageAni();
         if (count > 1)
         {
-            StartCoroutine(RepeatDamage(caster, damage, count - 1));
+            // StartCoroutine(RepeatDamage(caster, damage, count - 1));
+            TakeDamage(caster, damage, count - 1);
         }
     }
 
@@ -343,11 +347,62 @@ public class Character : NetworkBehaviour
     }
 
     #endregion
+    [ServerRpc(RequireOwnership = false)]
+    public void ServerDTextRpc(string s, Transform t = null)
+    {
+        ClientDText(s, t);
+    }
+    [ObserversRpc]
+    public void ClientDText(string s, Transform t)
+    {
+        if (this.gameObject.activeSelf)
+        {
+            if (t)
+            {
+                DTextManager.Instance.CreateText(t, s);
+            }
+            else
+            {
+                DTextManager.Instance.CreateText(transform, s);
+            }
+        }
+    }
 
     #region 回调
     public virtual void HP_OnChange(int prev, int next, bool asServer)
     {
         _HP = next;
+        if (asServer)
+        {
+            if (this is Enemy)
+            {
+                DTextManager.Instance.CreateHurtText(transform, next - prev);
+            }
+            if (this is Player p)
+            {
+                if (p.player_B != null)
+                {
+                    DTextManager.Instance.CreateHurtText(p.player_B.transform, next - prev);
+                }
+            }
+        }
+        else
+        {
+            if (!IsServerStarted)
+            {
+                if (this is Enemy)
+                {
+                    DTextManager.Instance.CreateHurtText(transform, next - prev);
+                }
+                if (this is Player p)
+                {
+                    if (p.player_B != null)
+                    {
+                        DTextManager.Instance.CreateHurtText(p.player_B.transform, next - prev);
+                    }
+                }
+            }
+        }
     }
     public virtual void Block_OnChange(int prev, int next, bool asServer)
     {

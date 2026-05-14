@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using UnityEngine;
 
 public class DTextManager : SingletonMono<DTextManager>
@@ -27,6 +28,12 @@ public class DTextManager : SingletonMono<DTextManager>
     public void CreateHurtText(Transform t, int i)
     {
         var dt = Instantiate(textPrefab, t).GetComponent<DynamicText>();
+        //dt.tmp.text = i.ToString();
+        dt.ChangeToHurtText(i);
+    }
+    public void CreateHurtText(Vector3 pos, int i)
+    {
+        var dt = Instantiate(textPrefab, pos, Quaternion.identity).GetComponent<DynamicText>();
         //dt.tmp.text = i.ToString();
         dt.ChangeToHurtText(i);
     }

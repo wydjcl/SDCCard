@@ -11,7 +11,7 @@ public class Hunter : Enemy
     {
         if (targetP != null)
         {
-            DTextManager.Instance.CreateText(this.aniUI.transform, "狙击");
+            ServerDTextRpc("狙击");
             targetP.TakeDamage(this, Attack());
         }
         else
@@ -19,12 +19,12 @@ public class Hunter : Enemy
             var r = Random.value;
             if (r < 0.7f)
             {
-                DTextManager.Instance.CreateText(this.aniUI.transform, "蓄力...");
+                ServerDTextRpc("蓄力...");
                 targetP = currentRoom.Value.roomBattleManager.GetRandomPlayer();
             }
             else
             {
-                DTextManager.Instance.CreateText(this.aniUI.transform, "后撤步");
+                ServerDTextRpc("后撤步");
                 dodge.Value = 1;
             }
         }

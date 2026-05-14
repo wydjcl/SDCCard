@@ -8,10 +8,13 @@ using UnityEngine;
 /// </summary>
 public class MapManager : NetworkBehaviour
 {
+    public static MapManager instance;
+    public MapDataSO mapData;
     public NetworkObject roomPrefab;
     public NetworkObject roomObjectPrefab;
 
     public GameObject mapGameObject;
+    public GameObject viewport;
     public GameObject content;
 
     public GameObject exitButtom;
@@ -31,6 +34,10 @@ public class MapManager : NetworkBehaviour
         Vector2Int.left,
         Vector2Int.right
   };
+    private void Awake()
+    {
+        instance = this;
+    }
     private void Start()
     {
         //  GameObject healthBarUI = GameObject.FindGameObjectWithTag("PlayerHPBarUI");
@@ -93,6 +100,8 @@ public class MapManager : NetworkBehaviour
         }
         rooms[new Vector2Int(0, 0)].canExplore.Value = true;
         SetRandomExit();
+        SetBoss();
+        SetChests();
         Debug.Log($"生成房间数量: {rooms.Count}");
         ClientStart();
     }
@@ -231,12 +240,67 @@ public class MapManager : NetworkBehaviour
             Debug.LogWarning("没有可用房间可设置 Exit");
             return;
         }
-
-        int index = Random.Range(0, candidates.Count);
+        int index = rng.Next(0, candidates.Count);
         Room selected = candidates[index];
 
         selected.roomType.Value = RoomType.Exit;
         Debug.Log("逃生房间为" + selected.gridPos.Value);
+    }
+
+    public void SetBoss()
+    {
+        List<Room> candidates = new List<Room>();
+
+        foreach (var kv in rooms)
+        {
+            Room room = kv.Value;
+
+            if (room == null) continue;
+
+            // ❌ 排除 start 和 boss
+            if (room.roomType.Value == RoomType.Start) continue;
+            if (room.roomType.Value == RoomType.Exit) continue;
+
+            candidates.Add(room);
+        }
+
+        if (candidates.Count == 0)
+        {
+            Debug.LogWarning("没有可用房间可设置Boss");
+            return;
+        }
+        int index = rng.Next(0, candidates.Count);
+        Room selected = candidates[index];
+
+        selected.roomType.Value = RoomType.Boss;
+        Debug.Log("Boss房间为" + selected.gridPos.Value);
+    }
+
+    public void SetChests()
+    {
+        foreach (var r in rooms)
+        {
+            if (r.Value.roomType.Value == RoomType.Chest)
+            {
+                // 1️⃣ 随机生成 1~4 个宝箱
+                int chestCount = rng.Next(1, 5);
+
+                for (int i = 0; i < chestCount; i++)
+                {
+                    float x = rng.Next(0, 13);
+                    float y = rng.Next(-2, 6);
+                    Vector2 spawnPos = new Vector2(x, y);
+
+                    var c = Instantiate(Dic.Instance.chestPrefab, spawnPos, Quaternion.identity).GetComponent<Chest>();
+
+                    c.room.Value = r.Value;
+
+                    Spawn(c, null, this.gameObject.scene);
+
+                    c.InitChest(mapData.GenerateDrops());
+                }
+            }
+        }
     }
     /// <summary>
     /// 点击房间后开放周围房间

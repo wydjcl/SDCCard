@@ -30,7 +30,7 @@ public class Boar : Enemy
         {
             currentRoom.Value.roomBattleManager.GetRandomPlayer().TakeDamage(this, Attack());
         }
-        DTextManager.Instance.CreateText(this.aniUI.transform, "撞击");
+        ServerDTextRpc("撞击");
         TurnEnd();
     }
 }

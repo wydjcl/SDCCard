@@ -10,18 +10,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 296b310313653554fb1d40e208263db9, type: 3}
-  m_Name: "\u91CE\u732A"
+  m_Name: "\u91CE\u732A\u516C\u7235"
   m_EditorClassIdentifier: 
-  maxHP: 70
+  maxHP: 200
   attack: 10
   denfense: 0
   speed: 40
   enemyProps:
-  - propData: {fileID: 11400000, guid: 449b9d4c010dc6e42a76dd7e4afc17a9, type: 2}
+  - propData: {fileID: 11400000, guid: 4d779e2a901802f42bc095a634d134f7, type: 2}
+    amountMin: 1
+    amountMax: 1
+    dropRate: 1
+  - propData: {fileID: 11400000, guid: 0b48a5553c49204418092943832f2cb0, type: 2}
+    amountMin: 3
+    amountMax: 5
+    dropRate: 1
+  - propData: {fileID: 11400000, guid: 4be8dc7d1838ed142b96a5bb46bcd3c4, type: 2}
+    amountMin: 3
+    amountMax: 5
+    dropRate: 1
+  - propData: {fileID: 11400000, guid: 3b2416084bcc6fb4e92cfb2947c7bcbb, type: 2}
     amountMin: 1
     amountMax: 2
     dropRate: 0.75
-  - propData: {fileID: 11400000, guid: 0b48a5553c49204418092943832f2cb0, type: 2}
-    amountMin: 1
-    amountMax: 1
-    dropRate: 0.3

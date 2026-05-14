@@ -12,12 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 296b310313653554fb1d40e208263db9, type: 3}
   m_Name: "\u68EE\u6797\u72FC"
   m_EditorClassIdentifier: 
-  maxHP: 100
-  attack: 10
+  maxHP: 40
+  attack: 5
   denfense: 0
-  speed: 50
+  speed: 100
   enemyProps:
-  - propData: {fileID: 11400000, guid: 449b9d4c010dc6e42a76dd7e4afc17a9, type: 2}
+  - propData: {fileID: 11400000, guid: 4be8dc7d1838ed142b96a5bb46bcd3c4, type: 2}
     amountMin: 1
-    amountMax: 2
-    dropRate: 0.5
+    amountMax: 1
+    dropRate: 0.75
+  - propData: {fileID: 11400000, guid: 0b48a5553c49204418092943832f2cb0, type: 2}
+    amountMin: 1
+    amountMax: 1
+    dropRate: 0.3
